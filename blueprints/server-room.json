@@ -1,0 +1,67 @@
+{
+  "id": "server-room",
+  "name": "Server Room",
+  "description": "Datacenter rack temp, humidity, and power",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "room_name",
+      "label": "Room Name",
+      "type": "text",
+      "default": "DC Row A",
+      "required": true
+    },
+    {
+      "key": "max_temp_c",
+      "label": "Max temp (C)",
+      "type": "number",
+      "default": 27,
+      "min": 22,
+      "max": 35
+    },
+    {
+      "key": "humidity_max",
+      "label": "Max humidity (%)",
+      "type": "number",
+      "default": 60,
+      "min": 40,
+      "max": 80
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "current_clamp",
+        "co2",
+        "water_leak"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "rack_temp_c",
+      "label": "Rack temp",
+      "unit": "C"
+    },
+    {
+      "key": "humidity_pct",
+      "label": "Humidity",
+      "unit": "%"
+    },
+    {
+      "key": "cooling_on",
+      "label": "Cooling on",
+      "type": "bool"
+    }
+  ]
+}

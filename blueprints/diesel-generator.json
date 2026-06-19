@@ -1,0 +1,65 @@
+{
+  "id": "diesel-generator",
+  "name": "Diesel Generator",
+  "description": "Generator vibration, voltage, and runtime",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "gen_name",
+      "label": "Gen Name",
+      "type": "text",
+      "default": "Backup Gen",
+      "required": true
+    },
+    {
+      "key": "vibration_alert_g",
+      "label": "Vibration alert (g)",
+      "type": "number",
+      "default": 2,
+      "min": 1,
+      "max": 5
+    },
+    {
+      "key": "auto_start",
+      "label": "Auto start on outage",
+      "type": "toggle",
+      "default": false
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "vibration",
+        "voltage",
+        "current_clamp",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "vibration_g",
+      "label": "Vibration",
+      "unit": "g"
+    },
+    {
+      "key": "output_kw",
+      "label": "Output",
+      "unit": "kW"
+    },
+    {
+      "key": "running",
+      "label": "Running",
+      "type": "bool"
+    }
+  ]
+}

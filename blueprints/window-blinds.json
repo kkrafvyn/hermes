@@ -1,0 +1,63 @@
+{
+  "id": "window-blinds",
+  "name": "Window Blinds",
+  "description": "Automated blinds from lux and temperature",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "room_name",
+      "label": "Room Name",
+      "type": "text",
+      "default": "Living Room",
+      "required": true
+    },
+    {
+      "key": "lux_close",
+      "label": "Close below (lux)",
+      "type": "number",
+      "default": 800,
+      "min": 100,
+      "max": 5000
+    },
+    {
+      "key": "heat_block",
+      "label": "Block heat when hot",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "lux",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "blinds_pct",
+      "label": "Blinds open",
+      "unit": "%"
+    },
+    {
+      "key": "room_lux",
+      "label": "Room lux",
+      "unit": "lux"
+    },
+    {
+      "key": "auto_mode",
+      "label": "Auto mode",
+      "type": "bool"
+    }
+  ]
+}

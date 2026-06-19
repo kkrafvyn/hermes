@@ -1,0 +1,66 @@
+{
+  "id": "grain-silo",
+  "name": "Grain Silo",
+  "description": "Silo temperature, humidity, and tilt monitoring",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "silo_name",
+      "label": "Silo Name",
+      "type": "text",
+      "default": "Silo 2",
+      "required": true
+    },
+    {
+      "key": "max_temp_c",
+      "label": "Max grain temp (C)",
+      "type": "number",
+      "default": 40,
+      "min": 30,
+      "max": 60
+    },
+    {
+      "key": "humidity_alert",
+      "label": "Humidity alert (%)",
+      "type": "number",
+      "default": 70,
+      "min": 50,
+      "max": 90
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ds18b20",
+        "temp_humidity",
+        "shock_tilt"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "grain_temp_c",
+      "label": "Grain temp",
+      "unit": "C"
+    },
+    {
+      "key": "humidity_pct",
+      "label": "Humidity",
+      "unit": "%"
+    },
+    {
+      "key": "spoilage_risk",
+      "label": "Spoilage risk",
+      "type": "bool"
+    }
+  ]
+}

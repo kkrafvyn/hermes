@@ -1,11 +1,16 @@
 build/
 data/
 manual/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/c_cpp_properties.json
+!.vscode/extensions.json
 .platformio/
 .pip-cache/
 tmp/
 .pio/
+compile_commands.json
+hardware/esp8266/compile_commands.json
 *.o
 *.a
 *.exe
@@ -13,3 +18,8 @@ __pycache__/
 *.pyc
 .DS_Store
 .env
+.cache/
+.clangd
+hardware/src/.cache/
+hardware/src/.clangd
+hardware/src/wifi_config.h

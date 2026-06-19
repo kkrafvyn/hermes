@@ -1,0 +1,66 @@
+{
+  "id": "tank-level",
+  "name": "Tank Level",
+  "description": "Tank or reservoir level and refill alerts",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "tank_name",
+      "label": "Tank Name",
+      "type": "text",
+      "default": "Water Tank",
+      "required": true
+    },
+    {
+      "key": "low_level_cm",
+      "label": "Low level (cm)",
+      "type": "number",
+      "default": 50,
+      "min": 10,
+      "max": 200
+    },
+    {
+      "key": "high_level_cm",
+      "label": "High level (cm)",
+      "type": "number",
+      "default": 400,
+      "min": 100,
+      "max": 500
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ultrasonic",
+        "water_level",
+        "pressure"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "level_cm",
+      "label": "Level",
+      "unit": "cm"
+    },
+    {
+      "key": "volume_pct",
+      "label": "Volume",
+      "unit": "%"
+    },
+    {
+      "key": "refill_due",
+      "label": "Refill due",
+      "type": "bool"
+    }
+  ]
+}

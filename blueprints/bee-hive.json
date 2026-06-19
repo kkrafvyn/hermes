@@ -1,0 +1,66 @@
+{
+  "id": "bee-hive",
+  "name": "Bee Hive",
+  "description": "Hive weight, temp, and humidity for colony health",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "hive_name",
+      "label": "Hive Name",
+      "type": "text",
+      "default": "Hive 7",
+      "required": true
+    },
+    {
+      "key": "weight_alert_kg",
+      "label": "Swarm weight drop (kg)",
+      "type": "number",
+      "default": 3,
+      "min": 1,
+      "max": 10
+    },
+    {
+      "key": "check_interval_sec",
+      "label": "Check interval (sec)",
+      "type": "number",
+      "default": 300,
+      "min": 60,
+      "max": 3600
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "weight_loadcell",
+        "temp_humidity",
+        "lux"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "hive_weight_kg",
+      "label": "Hive weight",
+      "unit": "kg"
+    },
+    {
+      "key": "hive_temp_c",
+      "label": "Hive temp",
+      "unit": "C"
+    },
+    {
+      "key": "swarm_alert",
+      "label": "Swarm alert",
+      "type": "bool"
+    }
+  ]
+}

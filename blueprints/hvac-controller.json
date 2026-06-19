@@ -1,0 +1,72 @@
+{
+  "id": "hvac-controller",
+  "name": "HVAC Controller",
+  "description": "Multi-zone heating and cooling control",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "building_name",
+      "label": "Building Name",
+      "type": "text",
+      "default": "Office Wing",
+      "required": true
+    },
+    {
+      "key": "target_temp_c",
+      "label": "Target temp (C)",
+      "type": "number",
+      "default": 22,
+      "min": 16,
+      "max": 28
+    },
+    {
+      "key": "deadband_c",
+      "label": "Deadband (C)",
+      "type": "number",
+      "default": 1,
+      "min": 0.5,
+      "max": 3
+    },
+    {
+      "key": "auto_climate",
+      "label": "Auto climate",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "pressure",
+        "co2"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "zone_temp_c",
+      "label": "Zone temp",
+      "unit": "C"
+    },
+    {
+      "key": "hvac_on",
+      "label": "HVAC on",
+      "type": "bool"
+    },
+    {
+      "key": "co2_ppm",
+      "label": "CO2",
+      "unit": "ppm"
+    }
+  ]
+}

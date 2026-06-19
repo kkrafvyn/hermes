@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "name": "HERMES ESP8266 (PlatformIO)",
+      "compileCommands": "${workspaceFolder}/compile_commands.json",
+      "compilerPath": "${workspaceFolder}/.platformio/packages/toolchain-xtensa/bin/xtensa-lx106-elf-g++.exe",
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "gcc-x64",
+      "includePath": [
+        "${workspaceFolder}/hardware/src",
+        "${workspaceFolder}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266",
+        "${workspaceFolder}/.platformio/packages/framework-arduinoespressif8266/variants/nodemcu",
+        "${workspaceFolder}/.platformio/packages/framework-arduinoespressif8266/libraries/**",
+        "${workspaceFolder}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include",
+        "${workspaceFolder}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include",
+        "${workspaceFolder}/.platformio/packages/toolchain-xtensa/include"
+      ],
+      "defines": [
+        "ARDUINO=10805",
+        "ESP8266",
+        "ARDUINO_ARCH_ESP8266",
+        "ARDUINO_ESP8266_ESP12",
+        "HERMES_ESP8266",
+        "HERMES_HTTP_SERVER=1",
+        "HERMES_NODE_ID=0",
+        "_GNU_SOURCE"
+      ]
+    }
+  ],
+  "version": 4
+}

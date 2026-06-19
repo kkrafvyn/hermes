@@ -1,0 +1,66 @@
+{
+  "id": "freezer-monitor",
+  "name": "Freezer Monitor",
+  "description": "Deep freezer and cold storage compliance",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "unit_name",
+      "label": "Unit Name",
+      "type": "text",
+      "default": "Walk-in Freezer",
+      "required": true
+    },
+    {
+      "key": "target_temp_c",
+      "label": "Target temp (C)",
+      "type": "number",
+      "default": -18,
+      "min": -30,
+      "max": -10
+    },
+    {
+      "key": "door_alert_min",
+      "label": "Door open alert (min)",
+      "type": "number",
+      "default": 5,
+      "min": 1,
+      "max": 30
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ds18b20",
+        "door_contact",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "freezer_temp_c",
+      "label": "Freezer temp",
+      "unit": "C"
+    },
+    {
+      "key": "door_open_min",
+      "label": "Door open",
+      "unit": "min"
+    },
+    {
+      "key": "breach",
+      "label": "Breach",
+      "type": "bool"
+    }
+  ]
+}

@@ -128,6 +128,14 @@ class Handler(BaseHTTPRequestHandler):
 
             return self._serve_file(DASHBOARD_DIR / "style.css", "text/css")
 
+        if path == "/themes.css":
+
+            return self._serve_file(DASHBOARD_DIR / "themes.css", "text/css")
+
+        if path == "/themes.js":
+
+            return self._serve_file(DASHBOARD_DIR / "themes.js", "application/javascript")
+
         if path == "/app.js":
 
             return self._serve_file(DASHBOARD_DIR / "app.js", "application/javascript")
@@ -197,6 +205,12 @@ class Handler(BaseHTTPRequestHandler):
             from sensors import catalog_summary  # noqa: E402
 
             return self._json(200, catalog_summary())
+
+        if path == "/api/mesh/nodes":
+
+            from mesh import status_summary  # noqa: E402
+
+            return self._json(200, status_summary())
 
         if path == "/api/blueprints":
 
@@ -278,7 +292,14 @@ class Handler(BaseHTTPRequestHandler):
 
             telemetry = body.get("telemetry")
 
-            return self._json(200, cluster.heartbeat(int(body.get("node_id", 0)), telemetry))
+            result = cluster.heartbeat(int(body.get("node_id", 0)), telemetry)
+            if body.get("mesh"):
+                try:
+                    from mesh import ingest_telemetry  # noqa: E402
+                    ingest_telemetry(body)
+                except Exception:
+                    pass
+            return self._json(200, result)
 
 
 
@@ -292,6 +313,14 @@ class Handler(BaseHTTPRequestHandler):
 
             ))
 
+        if path.startswith("/api/nodes/") and path.endswith("/board/gpio"):
+            node_id = int(path.split("/")[3])
+            return self._json(200, cluster.set_board_gpio(
+                node_id,
+                body.get("template_id", ""),
+                body.get("gpio"),
+            ))
+
 
 
         if path == "/api/link/send":
@@ -302,15 +331,19 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/api/apps/create":
 
+            cfg = body.get("config") or {}
+            node_id = body.get("node_id")
+            if node_id is None:
+                node_id = cfg.get("target_node")
             result = cluster.create_app_from_blueprint(
 
                 body.get("blueprint", ""),
 
                 body.get("name", ""),
 
-                body.get("config"),
+                cfg,
 
-                int(body["node_id"]) if body.get("node_id") is not None else None,
+                int(node_id) if node_id is not None else None,
 
                 bool(body.get("auto_start", True)),
 

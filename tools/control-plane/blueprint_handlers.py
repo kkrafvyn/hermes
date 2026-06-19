@@ -399,3 +399,19 @@ TICK: dict[str, TickFn] = {
     "machine-monitor": _tick_machine, "pest-trap": _tick_pest, "smart-gate": _tick_smart_gate,
     "elder-care": _tick_elder, "fire-smoke": _tick_fire, "parking-gate": _tick_parking,
 }
+
+
+def _register_extended_handlers() -> None:
+    import blueprint_handlers_ext as ext
+
+    for bid in ext.NEW_APPS:
+        fn = bid.replace("-", "_")
+        init_fn = getattr(ext, f"_init_{fn}", None)
+        tick_fn = getattr(ext, f"_tick_{fn}", None)
+        if init_fn:
+            INIT[bid] = init_fn
+        if tick_fn:
+            TICK[bid] = tick_fn
+
+
+_register_extended_handlers()

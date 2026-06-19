@@ -1,7 +1,9 @@
 # HERMES App Blueprints
 
-**26** no-code application templates for **App Studio** in the dashboard.  
+**51** no-code application templates for **App Studio** in the dashboard.  
 Each blueprint defines form fields, default sensors, metrics, and runtime simulation handlers.
+
+ESP8266 testing: **one active app per board**; the control plane supports all **51** types across the cluster.
 
 | Item | Path |
 |------|------|
@@ -27,6 +29,13 @@ Each blueprint defines form fields, default sensors, metrics, and runtime simula
 | pest-trap | Pest Trap | motion_pir, temp_humidity |
 | smart-gate | Smart Gate | flow_meter, water_level, ultrasonic |
 | weather-station | Weather Station | temp_humidity, wind_speed, wind_direction, rain_gauge, light_par |
+| hydroponics | Hydroponics | ph, soil_ec, water_level, temp_humidity, flow_meter |
+| compost-monitor | Compost Monitor | ds18b20, soil_moisture, temp_humidity |
+| vineyard | Vineyard Monitor | soil_moisture, leaf_wetness, temp_humidity, lux, wind_speed |
+| bee-hive | Bee Hive | weight_loadcell, temp_humidity, lux |
+| poultry-coop | Poultry Coop | temp_humidity, ammonia, door_contact, motion_pir |
+| grain-silo | Grain Silo | ds18b20, temp_humidity, shock_tilt |
+| lawn-irrigation | Lawn Irrigation | soil_moisture, rain_gauge, flow_meter |
 
 ### Smart home & building
 
@@ -39,6 +48,13 @@ Each blueprint defines form fields, default sensors, metrics, and runtime simula
 | pool-spa | Pool & Spa | ph, orp, temp_humidity, flow_meter |
 | fire-smoke | Fire & Smoke | smoke, co_gas, gas_mq, temp_humidity |
 | elder-care | Elder Care | motion_pir, temp_humidity, door_contact |
+| hvac-controller | HVAC Controller | temp_humidity, pressure, co2 |
+| window-blinds | Window Blinds | lux, temp_humidity |
+| garage-door | Garage Door | door_contact, motion_pir, ultrasonic |
+| water-meter | Water Meter | flow_meter, water_leak, pressure |
+| gas-safety | Gas Safety | gas_mq, co_gas, smoke |
+| wine-cellar | Wine Cellar | temp_humidity, ds18b20 |
+| mold-risk | Mold Risk | temp_humidity, voc, water_leak |
 
 ### Energy & mobility
 
@@ -49,6 +65,9 @@ Each blueprint defines form fields, default sensors, metrics, and runtime simula
 | ev-charger | EV Charger | current_clamp, voltage, temp_humidity |
 | asset-tracker | Asset Tracker | ble_rssi, gps, accelerometer |
 | parking-gate | Parking Gate | ultrasonic, motion_pir |
+| battery-room | Battery Room | voltage, current_clamp, temp_humidity, gas_mq |
+| diesel-generator | Diesel Generator | vibration, voltage, current_clamp, temp_humidity |
+| street-lighting | Street Lighting | lux, motion_pir, current_clamp |
 
 ### Industrial & logistics
 
@@ -60,6 +79,14 @@ Each blueprint defines form fields, default sensors, metrics, and runtime simula
 | sensor-net | Sensor Net | (user-selected sensor_list) |
 | telemetry | Telemetry | (cluster metrics — no fixed sensors) |
 | security | Security | motion_pir, door_contact, smoke |
+| conveyor-monitor | Conveyor Monitor | vibration, accelerometer, current_clamp, temp_humidity |
+| tank-level | Tank Level | ultrasonic, water_level, pressure |
+| pressure-vessel | Pressure Vessel | pressure, temp_humidity, vibration |
+| freezer-monitor | Freezer Monitor | ds18b20, door_contact, temp_humidity |
+| brewery | Brewery | ph, temp_humidity, pressure, co2 |
+| server-room | Server Room | temp_humidity, current_clamp, co2, water_leak |
+| lift-elevator | Lift & Elevator | vibration, door_contact, accelerometer |
+| rfid-gate | RFID Gate | rfid, ble_rssi, motion_pir, door_contact |
 
 ---
 

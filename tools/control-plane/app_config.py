@@ -32,11 +32,17 @@ def save_config(app_name: str, blueprint_id: str, config: dict, runtime: dict | 
     return path
 
 
-def load_config(app_name: str) -> dict | None:
-    path = APPS_DIR / app_name / "config.json"
+def _read_json(path: Path) -> dict | None:
     if not path.exists():
         return None
-    return json.loads(path.read_text())
+    try:
+        return json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return None
+
+
+def load_config(app_name: str) -> dict | None:
+    return _read_json(APPS_DIR / app_name / "config.json")
 
 
 def save_runtime(app_name: str, runtime: dict) -> None:
@@ -52,5 +58,7 @@ def list_configs() -> dict[str, dict]:
     if not APPS_DIR.exists():
         return out
     for path in APPS_DIR.glob("*/config.json"):
-        out[path.parent.name] = json.loads(path.read_text())
+        data = _read_json(path)
+        if data:
+            out[path.parent.name] = data
     return out

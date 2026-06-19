@@ -1,8 +1,8 @@
 {
   "id": "sensor-net",
   "name": "Sensor Network",
-  "description": "Multi-sensor mesh with periodic reporting",
-  "version": "1.0.0",
+  "description": "Multi-sensor mesh with local + remote nodes",
+  "version": "1.1.0",
   "memory": "64KB",
   "priority": 4,
   "fields": [
@@ -30,8 +30,33 @@
       "default": 120
     },
     {
+      "key": "mesh_enabled",
+      "label": "Enable sensor mesh",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "mesh_max_nodes",
+      "label": "Max remote nodes",
+      "type": "number",
+      "min": 1,
+      "max": 8,
+      "default": 4
+    },
+    {
+      "key": "mesh_transport",
+      "label": "Mesh transport",
+      "type": "select",
+      "default": "uart",
+      "options": [
+        {"value": "uart", "label": "UART (wired)"},
+        {"value": "ble", "label": "BLE (nRF / ESP)"},
+        {"value": "zigbee", "label": "Zigbee coprocessor"}
+      ]
+    },
+    {
       "key": "sensors",
-      "label": "Sensors",
+      "label": "Local sensors",
       "type": "sensor_list",
       "default": [
         "temp_humidity",
@@ -41,10 +66,16 @@
       ]
     },
     {
+      "key": "remote_sensors",
+      "label": "Remote sensor types",
+      "type": "text",
+      "default": "temp_humidity,motion_pir,door_contact"
+    },
+    {
       "key": "target_node",
       "label": "Target node",
       "type": "node",
-      "default": 2
+      "default": 0
     }
   ],
   "metrics": [
@@ -54,8 +85,8 @@
       "unit": ""
     },
     {
-      "key": "last_reading",
-      "label": "Last reading",
+      "key": "remote_nodes",
+      "label": "Remote nodes",
       "unit": ""
     },
     {

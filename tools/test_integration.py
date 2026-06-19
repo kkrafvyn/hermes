@@ -71,7 +71,35 @@ def run_tests() -> None:
     s = api("GET", "/api/status")
     check("cluster online", s.get("cluster_online") is True)
     check("3 nodes", len(s.get("nodes", [])) == 3)
-    check("apps present", len(s.get("apps", [])) >= 3)
+
+    # Create blueprint apps for lifecycle tests
+    farm = api("POST", "/api/apps/create", {
+        "blueprint": "smartfarm",
+        "name": "test-farm",
+        "config": {"zone_name": "Test Farm", "target_node": 0, "sensors": ["soil_moisture"]},
+        "auto_start": True,
+    })
+    if farm.get("name") == "test-farm":
+        check("create smartfarm", True)
+    elif "error" in farm and "already" in farm["error"]:
+        check("create smartfarm", True)
+    else:
+        check("create smartfarm", False, str(farm))
+    tele = api("POST", "/api/apps/create", {
+        "blueprint": "telemetry",
+        "name": "test-telemetry",
+        "config": {"hub_name": "Test Hub", "target_node": 1, "sensors": ["voltage"]},
+        "auto_start": True,
+    })
+    if tele.get("name") == "test-telemetry":
+        check("create telemetry", True)
+    elif "error" in tele and "already" in tele["error"]:
+        check("create telemetry", True)
+    else:
+        check("create telemetry", False, str(tele))
+
+    s = api("GET", "/api/status")
+    check("apps present", len(s.get("apps", [])) >= 2)
 
     # Register + heartbeat
     api("POST", "/api/nodes/register", {
@@ -94,12 +122,12 @@ def run_tests() -> None:
             check("install testapp", r.get("name") == "testapp", str(r))
 
     # App lifecycle
-    api("POST", "/api/apps/smartfarm/start", {})
-    r = api("POST", "/api/apps/smartfarm/pause", {})
+    api("POST", "/api/apps/test-farm/start", {})
+    r = api("POST", "/api/apps/test-farm/pause", {})
     check("pause smartfarm", r.get("state") in ("paused", "running"))
 
     # Migration
-    m = api("POST", "/api/apps/telemetry/migrate", {"dst_node": 2})
+    m = api("POST", "/api/apps/test-telemetry/migrate", {"dst_node": 2})
     check("migrate telemetry", m.get("app", {}).get("node_id") == 2, str(m))
     check("migration steps", len(m.get("steps", [])) == 5)
 

@@ -37,8 +37,9 @@ size_t hermes_sensor_count(void);
 /** Get reading by index (0 .. count-1). */
 const hermes_sensor_reading_t *hermes_sensor_get(size_t index);
 
-/** Append sensor JSON fragment to buf: ,"sensors":[...] */
+/** Append local + mesh sensor JSON: ,"sensors":[...] */
 int hermes_sensor_json(char *buf, size_t max);
+int hermes_sensor_json_all(char *buf, size_t max);
 
 #ifdef __cplusplus
 }

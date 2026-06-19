@@ -1,0 +1,64 @@
+{
+  "id": "pressure-vessel",
+  "name": "Pressure Vessel",
+  "description": "Pressure vessel monitoring and relief alerts",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "vessel_name",
+      "label": "Vessel Name",
+      "type": "text",
+      "default": "Tank 1",
+      "required": true
+    },
+    {
+      "key": "max_pressure_kpa",
+      "label": "Max pressure (kPa)",
+      "type": "number",
+      "default": 600,
+      "min": 100,
+      "max": 1000
+    },
+    {
+      "key": "relief_auto",
+      "label": "Auto relief alert",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "pressure",
+        "temp_humidity",
+        "vibration"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "pressure_kpa",
+      "label": "Pressure",
+      "unit": "kPa"
+    },
+    {
+      "key": "vessel_temp_c",
+      "label": "Vessel temp",
+      "unit": "C"
+    },
+    {
+      "key": "over_pressure",
+      "label": "Over pressure",
+      "type": "bool"
+    }
+  ]
+}

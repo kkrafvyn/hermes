@@ -55,7 +55,7 @@ def main() -> int:
 
     try:
         bps = api("GET", "/api/blueprints")
-        check("list blueprints", len(bps.get("blueprints", [])) >= 26)
+        check("list blueprints", len(bps.get("blueprints", [])) >= 51)
 
         detail = api("GET", "/api/blueprints/smartfarm")
         check("smartfarm schema", "fields" in detail and len(detail["fields"]) >= 4)

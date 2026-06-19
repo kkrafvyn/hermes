@@ -1,0 +1,73 @@
+{
+  "id": "poultry-coop",
+  "name": "Poultry Coop",
+  "description": "Coop climate, ammonia, and door security",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "coop_name",
+      "label": "Coop Name",
+      "type": "text",
+      "default": "Coop North",
+      "required": true
+    },
+    {
+      "key": "max_temp_c",
+      "label": "Max temp (C)",
+      "type": "number",
+      "default": 32,
+      "min": 25,
+      "max": 40
+    },
+    {
+      "key": "ammonia_alert_ppm",
+      "label": "Ammonia alert (ppm)",
+      "type": "number",
+      "default": 25,
+      "min": 10,
+      "max": 50
+    },
+    {
+      "key": "auto_vent",
+      "label": "Auto ventilation",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "ammonia",
+        "door_contact",
+        "motion_pir"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "coop_temp_c",
+      "label": "Coop temp",
+      "unit": "C"
+    },
+    {
+      "key": "ammonia_ppm",
+      "label": "Ammonia",
+      "unit": "ppm"
+    },
+    {
+      "key": "vents_on",
+      "label": "Vents on",
+      "type": "bool"
+    }
+  ]
+}

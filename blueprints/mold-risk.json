@@ -1,0 +1,66 @@
+{
+  "id": "mold-risk",
+  "name": "Mold Risk",
+  "description": "Indoor mold risk from humidity and temperature",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "room_name",
+      "label": "Room Name",
+      "type": "text",
+      "default": "Basement",
+      "required": true
+    },
+    {
+      "key": "humidity_alert",
+      "label": "Humidity alert (%)",
+      "type": "number",
+      "default": 75,
+      "min": 60,
+      "max": 95
+    },
+    {
+      "key": "temp_min_c",
+      "label": "Min temp (C)",
+      "type": "number",
+      "default": 15,
+      "min": 10,
+      "max": 20
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "voc",
+        "water_leak"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "humidity_pct",
+      "label": "Humidity",
+      "unit": "%"
+    },
+    {
+      "key": "dew_risk",
+      "label": "Dew risk",
+      "type": "bool"
+    },
+    {
+      "key": "mold_alert",
+      "label": "Mold alert",
+      "type": "bool"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "gas-safety",
+  "name": "Gas Safety",
+  "description": "Combustible gas and CO monitoring with shutoff",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "site_name",
+      "label": "Site Name",
+      "type": "text",
+      "default": "Kitchen",
+      "required": true
+    },
+    {
+      "key": "co_alert_ppm",
+      "label": "CO alert (ppm)",
+      "type": "number",
+      "default": 35,
+      "min": 20,
+      "max": 100
+    },
+    {
+      "key": "auto_shutoff",
+      "label": "Auto gas shutoff",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "gas_mq",
+        "co_gas",
+        "smoke"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "gas_level",
+      "label": "Gas level"
+    },
+    {
+      "key": "co_ppm",
+      "label": "CO",
+      "unit": "ppm"
+    },
+    {
+      "key": "shutoff_active",
+      "label": "Shutoff",
+      "type": "bool"
+    }
+  ]
+}

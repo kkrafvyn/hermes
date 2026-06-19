@@ -1,0 +1,63 @@
+{
+  "id": "rfid-gate",
+  "name": "RFID Gate",
+  "description": "RFID gate access and tag throughput",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "gate_name",
+      "label": "Gate Name",
+      "type": "text",
+      "default": "Loading Gate",
+      "required": true
+    },
+    {
+      "key": "tags_expected",
+      "label": "Expected tags/hr",
+      "type": "number",
+      "default": 60,
+      "min": 10,
+      "max": 500
+    },
+    {
+      "key": "geofence_alert",
+      "label": "Geofence alerts",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "rfid",
+        "ble_rssi",
+        "motion_pir",
+        "door_contact"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "tags_scanned",
+      "label": "Tags scanned"
+    },
+    {
+      "key": "throughput_hr",
+      "label": "Throughput/hr"
+    },
+    {
+      "key": "unauthorized",
+      "label": "Unauthorized",
+      "type": "bool"
+    }
+  ]
+}

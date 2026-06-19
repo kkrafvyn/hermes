@@ -11,6 +11,58 @@ BLUEPRINT_DIR = ROOT / "blueprints"
 from blueprint_engine import display_label  # noqa: E402
 from sensors import validate_sensor_list  # noqa: E402
 
+SENSOR_CONNECTIVITY_FIELDS = [
+    {
+        "key": "mesh_enabled",
+        "label": "Enable sensor mesh",
+        "type": "toggle",
+        "default": False,
+        "group": "Sensor connections",
+    },
+    {
+        "key": "mesh_max_nodes",
+        "label": "Max remote nodes",
+        "type": "number",
+        "min": 1,
+        "max": 8,
+        "default": 4,
+        "group": "Sensor connections",
+    },
+    {
+        "key": "remote_sensors",
+        "label": "Remote / mesh sensors",
+        "type": "sensor_list",
+        "default": [],
+        "group": "Sensor connections",
+    },
+]
+
+
+def enrich_blueprint(blueprint: dict) -> dict:
+    """Ensure every app can attach local + mesh / remote sensors."""
+    bp = json.loads(json.dumps(blueprint))
+    fields = list(bp.get("fields", []))
+    keys = {f.get("key") for f in fields}
+
+    for field in fields:
+        if field.get("key") == "sensors":
+            label = (field.get("label") or "").strip().lower()
+            if label in ("sensors", "sensor", ""):
+                field["label"] = "Local sensors"
+        if field.get("key") == "remote_sensors" and field.get("type") == "text":
+            field["type"] = "sensor_list"
+            default = field.get("default", "")
+            if isinstance(default, str):
+                field["default"] = [x.strip() for x in default.split(",") if x.strip()]
+
+    for extra in SENSOR_CONNECTIVITY_FIELDS:
+        if extra["key"] not in keys:
+            fields.append(dict(extra))
+
+    bp["fields"] = fields
+    bp["sensor_connectivity"] = True
+    return bp
+
 
 def list_blueprints() -> list[dict]:
     items = []
@@ -31,12 +83,12 @@ def get_blueprint(blueprint_id: str) -> dict | None:
     path = BLUEPRINT_DIR / f"{blueprint_id}.json"
     if not path.exists():
         return None
-    return json.loads(path.read_text())
+    return enrich_blueprint(json.loads(path.read_text()))
 
 
 def default_config(blueprint: dict) -> dict:
     cfg: dict = {}
-    for field in blueprint.get("fields", []):
+    for field in enrich_blueprint(blueprint).get("fields", []):
         cfg[field["key"]] = field.get("default")
     return cfg
 
@@ -46,7 +98,7 @@ def validate_config(blueprint: dict, config: dict) -> tuple[dict | None, str | N
     merged = default_config(blueprint)
     merged.update(config or {})
 
-    for field in blueprint.get("fields", []):
+    for field in enrich_blueprint(blueprint).get("fields", []):
         key = field["key"]
         val = merged.get(key)
         ftype = field.get("type", "text")
@@ -80,6 +132,16 @@ def validate_config(blueprint: dict, config: dict) -> tuple[dict | None, str | N
             if err:
                 return None, err
             merged[key] = validated
+        elif ftype == "select":
+            options = field.get("options", [])
+            allowed = [
+                o.get("value", o) if isinstance(o, dict) else o for o in options
+            ]
+            if allowed and val not in allowed:
+                return None, f"{field['label']} must be one of: {', '.join(map(str, allowed))}"
+            merged[key] = val
+        elif ftype == "textarea":
+            merged[key] = str(val) if val is not None else ""
         else:
             merged[key] = str(val) if val is not None else ""
 

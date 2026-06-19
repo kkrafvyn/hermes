@@ -129,6 +129,10 @@ def run_pio_build(
         return rc
 
     print(f"\nFlash OK on {upload_port}")
+    print("\nOn-board HTTP (WiFi setup like Tasmota):")
+    print("  1. If no WiFi saved: join AP HERMES-XXXX (see serial monitor)")
+    print("  2. Open http://192.168.4.1/ — scan networks, enter password, Connect")
+    print("  3. Board reboots and serves dashboard at http://<your-lan-ip>/")
     bridge_cmd = (
         f"python tools/serial-bridge/bridge.py {upload_port} --register "
         f"--node-id {node_id} --name \"{plan['name']}\" --node-type {target_id}"
@@ -179,7 +183,7 @@ def main() -> int:
         "--bridge", action="store_true",
         help="After flash, start serial-bridge and register the node",
     )
-    parser.add_argument("--node-id", type=int, default=1, help="Node id for --bridge (default 1)")
+    parser.add_argument("--node-id", type=int, default=0, help="Node id for --bridge (default 0)")
     args = parser.parse_args()
 
     if args.list_ports:

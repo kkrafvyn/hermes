@@ -1,0 +1,8 @@
+/**
+ * Optional build-time WiFi credentials (used only if nothing is saved in EEPROM).
+ * Leave empty to use on-board setup AP: connect to HERMES-XXXX and open http://192.168.4.1/
+ */
+#pragma once
+
+#define HERMES_WIFI_SSID ""
+#define HERMES_WIFI_PASS ""

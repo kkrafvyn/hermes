@@ -1,0 +1,67 @@
+{
+  "id": "battery-room",
+  "name": "Battery Room",
+  "description": "Battery bank voltage, temp, and safety",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "room_name",
+      "label": "Room Name",
+      "type": "text",
+      "default": "Battery Room",
+      "required": true
+    },
+    {
+      "key": "min_voltage",
+      "label": "Min voltage (V)",
+      "type": "number",
+      "default": 48,
+      "min": 40,
+      "max": 52
+    },
+    {
+      "key": "max_temp_c",
+      "label": "Max temp (C)",
+      "type": "number",
+      "default": 40,
+      "min": 30,
+      "max": 55
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "voltage",
+        "current_clamp",
+        "temp_humidity",
+        "gas_mq"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "bank_voltage",
+      "label": "Bank voltage",
+      "unit": "V"
+    },
+    {
+      "key": "bank_temp_c",
+      "label": "Bank temp",
+      "unit": "C"
+    },
+    {
+      "key": "vent_on",
+      "label": "Vent on",
+      "type": "bool"
+    }
+  ]
+}

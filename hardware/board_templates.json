@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "description": "HERMES board GPIO presets (Tasmota-style templates). Flash firmware, then fine-tune at http://<board-ip>/board",
+  "templates": [
+    {
+      "id": "raw",
+      "name": "Raw / custom",
+      "mcu": "any",
+      "description": "No pins assigned — configure everything in the web UI"
+    },
+    {
+      "id": "esp32s3_raw",
+      "name": "ESP32-S3 raw",
+      "mcu": "esp32s3",
+      "flash": "python scripts/flash_mcu.py esp32s3_raw --port COMx"
+    },
+    {
+      "id": "waveshare_esp32s3_sim7670g",
+      "name": "Waveshare ESP32-S3-SIM7670G-4G",
+      "mcu": "esp32s3",
+      "flash": "python scripts/flash_mcu.py esp32s3_sim7670g --port COMx",
+      "notes": "SIM7670G 4G, OV camera bus, TF slot, WS2812 on GPIO38, MAX17048 on I2C 15/16 (V2). Modem UART defaults GPIO17/18 — verify against your board revision.",
+      "pins": [
+        {"gpio": 38, "fn": "LED", "label": "RGB WS2812"},
+        {"gpio": 15, "fn": "I2C_SDA", "label": "Battery gauge"},
+        {"gpio": 16, "fn": "I2C_SCL", "label": "Battery gauge"},
+        {"gpio": 5, "fn": "SD_CLK"}, {"gpio": 4, "fn": "SD_CMD"}, {"gpio": 6, "fn": "SD_DATA"}, {"gpio": 46, "fn": "SD_CD"},
+        {"gpio": 17, "fn": "MODEM_TX"}, {"gpio": 18, "fn": "MODEM_RX"}, {"gpio": 45, "fn": "MODEM_PWR"}
+      ]
+    },
+    {
+      "id": "esp8266_nodemcu",
+      "name": "ESP8266 NodeMCU",
+      "mcu": "esp8266",
+      "pins": [
+        {"gpio": 2, "fn": "LED"},
+        {"gpio": 4, "fn": "RELAY"},
+        {"gpio": 5, "fn": "BUTTON"}
+      ]
+    },
+    {
+      "id": "esp32_cyd2432",
+      "name": "ESP32 CYD 2.4 TFT",
+      "mcu": "esp32",
+      "flash": "python scripts/flash_mcu.py esp32_tft --port COMx"
+    }
+  ]
+}

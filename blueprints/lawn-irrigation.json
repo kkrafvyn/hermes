@@ -1,0 +1,71 @@
+{
+  "id": "lawn-irrigation",
+  "name": "Lawn Irrigation",
+  "description": "Lawn zone irrigation with rain skip",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "zone_name",
+      "label": "Zone Name",
+      "type": "text",
+      "default": "Front Lawn",
+      "required": true
+    },
+    {
+      "key": "moisture_threshold",
+      "label": "Moisture threshold (%)",
+      "type": "number",
+      "default": 35,
+      "min": 20,
+      "max": 60
+    },
+    {
+      "key": "zones",
+      "label": "Zones",
+      "type": "number",
+      "default": 4,
+      "min": 1,
+      "max": 8
+    },
+    {
+      "key": "rain_skip",
+      "label": "Skip when raining",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "soil_moisture",
+        "rain_gauge",
+        "flow_meter"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "soil_moisture",
+      "label": "Soil moisture",
+      "unit": "%"
+    },
+    {
+      "key": "zones_active",
+      "label": "Zones active"
+    },
+    {
+      "key": "rain_skip_active",
+      "label": "Rain skip",
+      "type": "bool"
+    }
+  ]
+}

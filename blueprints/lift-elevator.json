@@ -1,0 +1,65 @@
+{
+  "id": "lift-elevator",
+  "name": "Lift & Elevator",
+  "description": "Elevator vibration, door cycles, and faults",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "lift_name",
+      "label": "Lift Name",
+      "type": "text",
+      "default": "Lift B",
+      "required": true
+    },
+    {
+      "key": "vibration_alert_g",
+      "label": "Vibration alert (g)",
+      "type": "number",
+      "default": 2,
+      "min": 1,
+      "max": 4
+    },
+    {
+      "key": "door_cycles_max",
+      "label": "Max door cycles/day",
+      "type": "number",
+      "default": 800,
+      "min": 100,
+      "max": 5000
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "vibration",
+        "door_contact",
+        "accelerometer"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "vibration_g",
+      "label": "Vibration",
+      "unit": "g"
+    },
+    {
+      "key": "door_cycles",
+      "label": "Door cycles"
+    },
+    {
+      "key": "fault",
+      "label": "Fault",
+      "type": "bool"
+    }
+  ]
+}

@@ -12,6 +12,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 
+# Legacy 3-node demo cluster — stripped from UI when not connected via bridge/agent.
+_DEMO_NODE_NAMES = frozenset({"STM32H7", "ESP32-S3", "nRF52840"})
+_DEMO_APP_NAMES = frozenset({"smartfarm", "telemetry", "sensor-net"})
+
 from persist import save_state, load_state, save_checkpoint  # noqa: E402
 from blueprints import get_blueprint, list_blueprints, validate_config, display_name  # noqa: E402
 from app_config import save_config, load_config, save_runtime, list_configs  # noqa: E402
@@ -86,29 +90,43 @@ class ClusterManager:
     def __init__(self) -> None:
         self._lock = threading.Lock()
         self._cmd_seq = 0
-        self._commands: dict[int, list[NodeCommand]] = {0: [], 1: [], 2: []}
-        self._frame_queues: dict[int, list[dict]] = {0: [], 1: [], 2: []}
+        self._commands: dict[int, list[NodeCommand]] = {}
+        self._frame_queues: dict[int, list[dict]] = {}
         self._link_stats: dict[str, int] = {"frames_routed": 0, "pings": 0}
-        self.leader_id: int = 1
-        self.nodes: dict[int, Node] = {
-            0: Node(0, "STM32H7", "stm32", cpu=45, ram_kb=256, temp_c=38, power_mw=420),
-            1: Node(1, "ESP32-S3", "esp32", cpu=28, ram_kb=180, temp_c=42, power_mw=380),
-            2: Node(2, "nRF52840", "nrf", cpu=12, ram_kb=64, temp_c=35, power_mw=95),
-        }
-        self.apps: dict[str, App] = {
-            "smartfarm": App("smartfarm", "1.0.0", 0, "running", cpu_percent=15, memory_kb=128),
-            "telemetry": App("telemetry", "0.2.1", 1, "running", cpu_percent=10, memory_kb=64),
-            "sensor-net": App("sensor-net", "0.1.0", 2, "paused", cpu_percent=0, memory_kb=32),
-        }
+        self.leader_id: int = 0
+        self.nodes: dict[int, Node] = {}
+        self.apps: dict[str, App] = {}
         self.logs: list[str] = []
-        self._quotas: dict[str, dict] = {
-            "smartfarm": {"cpu": 40, "memory_kb": 128},
-            "telemetry": {"cpu": 30, "memory_kb": 64},
-            "sensor-net": {"cpu": 30, "memory_kb": 32},
-        }
+        self._quotas: dict[str, dict] = {}
         self._load_persisted()
+        self._prune_legacy_demo()
         self._sync_blueprint_configs()
         self._start_telemetry()
+
+    def _prune_legacy_demo(self) -> None:
+        """Remove pre-seeded demo nodes/apps from older persisted state."""
+        with self._lock:
+            self._prune_legacy_demo_unlocked()
+
+    def _prune_legacy_demo_unlocked(self) -> None:
+        for nid in list(self.nodes.keys()):
+            n = self.nodes[nid]
+            if n.name in _DEMO_NODE_NAMES and not n.agent_connected:
+                del self.nodes[nid]
+                self._commands.pop(nid, None)
+                self._frame_queues.pop(nid, None)
+        for name in list(self.apps.keys()):
+            app = self.apps[name]
+            if name in _DEMO_APP_NAMES and not app.blueprint:
+                del self.apps[name]
+                self._quotas.pop(name, None)
+
+    def _visible_nodes_unlocked(self) -> list[Node]:
+        """Nodes connected via serial bridge or node agent."""
+        return [n for n in self.nodes.values() if n.agent_connected]
+
+    def _visible_node_ids_unlocked(self) -> set[int]:
+        return {n.id for n in self._visible_nodes_unlocked()}
 
     def _sync_blueprint_configs(self) -> None:
         """Restore blueprint metadata from data/apps/ after restart."""
@@ -241,13 +259,20 @@ class ClusterManager:
         with self._lock:
             if node_id in self.nodes:
                 n = self.nodes[node_id]
+                n.name = name
+                n.node_type = node_type
                 n.online = True
                 n.agent_connected = agent
                 n.last_heartbeat = time.time()
+                self._prune_legacy_demo_unlocked()
                 self._log(f"Node {name} re-registered (agent={agent})")
             else:
-                self.nodes[node_id] = Node(node_id, name, node_type, agent_connected=agent)
-                self._commands[node_id] = []
+                self.nodes[node_id] = Node(
+                    node_id, name, node_type, online=True, agent_connected=agent,
+                )
+                self._commands.setdefault(node_id, [])
+                self._frame_queues.setdefault(node_id, [])
+                self._prune_legacy_demo_unlocked()
                 self._log(f"Node {name} registered (id={node_id})")
             return self.nodes[node_id].to_dict()
 
@@ -265,6 +290,11 @@ class ClusterManager:
                 n.temp_c = float(telemetry.get("temp_c", n.temp_c))
                 n.power_mw = float(telemetry.get("power_mw", n.power_mw))
                 n.link_quality = int(telemetry.get("link_quality", n.link_quality))
+                try:
+                    from mesh import ingest_telemetry  # noqa: E402
+                    ingest_telemetry(telemetry)
+                except Exception:
+                    pass
             cmds = self._commands.get(node_id, [])
             pending = [{"cmd_id": c.cmd_id, "action": c.action, "app_name": c.app_name, "payload": c.payload}
                        for c in cmds]
@@ -307,28 +337,57 @@ class ClusterManager:
             return {"commands": [{"cmd_id": c.cmd_id, "action": c.action,
                                   "app_name": c.app_name, "payload": c.payload} for c in cmds]}
 
+    def set_board_gpio(self, node_id: int, template_id: str = "", gpio: dict | None = None) -> dict:
+        """Queue board GPIO template or pin map for serial bridge delivery."""
+        with self._lock:
+            if node_id not in self.nodes:
+                return {"error": "unknown node"}
+            if template_id and not gpio:
+                cmd_id = self._enqueue(node_id, "board_preset", "", {"template_id": template_id})
+            else:
+                payload = dict(gpio or {})
+                if template_id:
+                    payload["template_id"] = template_id
+                cmd_id = self._enqueue(node_id, "board_gpio", "", payload)
+            return {"ok": True, "cmd_id": cmd_id, "node_id": node_id}
+
     def get_status(self) -> dict:
         with self._lock:
-            online_nodes = [n for n in self.nodes.values() if n.online]
+            visible = self._visible_nodes_unlocked()
+            visible_ids = {n.id for n in visible}
+            online_nodes = [n for n in visible if n.online]
             avg_cpu = sum(n.cpu for n in online_nodes) / max(1, len(online_nodes))
             avg_temp = sum(n.temp_c for n in online_nodes) / max(1, len(online_nodes))
             total_power = sum(n.power_mw for n in online_nodes) / 1000
-            agents = sum(1 for n in self.nodes.values() if n.agent_connected)
+            agents = len(visible)
+            board_mode = len(visible) == 1
+            primary = visible[0].to_dict() if board_mode else None
+            apps = [
+                a.to_dict() for a in self.apps.values()
+                if not visible_ids or a.node_id in visible_ids
+            ]
             status = {
                 "cluster_online": bool(online_nodes),
+                "board_mode": board_mode,
+                "primary_node": primary,
                 "leader_id": self.leader_id,
                 "agents_connected": agents,
-                "nodes": [n.to_dict() for n in self.nodes.values()],
-                "apps": [a.to_dict() for a in self.apps.values()],
+                "nodes": [n.to_dict() for n in visible],
+                "apps": apps,
                 "metrics": {
-                    "load_percent": round(avg_cpu, 1),
-                    "power_w": round(total_power, 2),
-                    "temp_c": round(avg_temp, 1),
-                    "app_count": len(self.apps),
+                    "load_percent": round(avg_cpu, 1) if online_nodes else 0,
+                    "power_w": round(total_power, 2) if online_nodes else 0,
+                    "temp_c": round(avg_temp, 1) if online_nodes else 0,
+                    "app_count": len(apps),
                 },
                 "logs": self.logs[:20],
                 "link": self._link_status_unlocked(),
             }
+        try:
+            from mesh import status_summary  # noqa: E402
+            status["mesh"] = status_summary()
+        except Exception:
+            status["mesh"] = {"enabled": False, "nodes": []}
         try:
             from analytics import record  # noqa: E402
             record(status["metrics"])
@@ -365,9 +424,13 @@ class ClusterManager:
         with self._lock:
             if name in self.apps:
                 return {"error": f"{name} already exists"}
-            nid = node_id if node_id is not None else int(merged.get("target_node", 1))
+            nid = node_id if node_id is not None else int(merged.get("target_node", 0))
+            visible_ids = self._visible_node_ids_unlocked()
+            if visible_ids and nid not in visible_ids:
+                nid = next(iter(visible_ids))
+                merged["target_node"] = nid
             if nid not in self.nodes:
-                return {"error": "invalid node"}
+                return {"error": "no board connected — flash firmware and start the serial bridge"}
             mem = _parse_memory(bp.get("memory", "64KB"))
             runtime = init_runtime(blueprint_id, merged)
             save_config(name, blueprint_id, merged, runtime)

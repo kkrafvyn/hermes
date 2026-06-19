@@ -1,0 +1,63 @@
+{
+  "id": "garage-door",
+  "name": "Garage Door",
+  "description": "Garage door state, motion, and auto-close",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "garage_name",
+      "label": "Garage Name",
+      "type": "text",
+      "default": "Main Garage",
+      "required": true
+    },
+    {
+      "key": "auto_close_min",
+      "label": "Auto-close after (min)",
+      "type": "number",
+      "default": 10,
+      "min": 1,
+      "max": 60
+    },
+    {
+      "key": "motion_arm",
+      "label": "Arm on motion",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "door_contact",
+        "motion_pir",
+        "ultrasonic"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "door_open",
+      "label": "Door open",
+      "type": "bool"
+    },
+    {
+      "key": "motion_events",
+      "label": "Motion events"
+    },
+    {
+      "key": "auto_closed",
+      "label": "Auto closed",
+      "type": "bool"
+    }
+  ]
+}

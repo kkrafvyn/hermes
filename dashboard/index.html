@@ -2,74 +2,146 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HERMES Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HERMES</title>
+  <link rel="stylesheet" href="themes.css">
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function(){var t=localStorage.getItem('hermes_theme')||'apple';document.documentElement.setAttribute('data-theme',t);})();
+  </script>
+  <script src="themes.js"></script>
 </head>
 <body>
-  <header>
-    <h1>HERMES</h1>
-    <span class="subtitle">Heterogeneous Embedded Runtime</span>
-    <span id="cluster-status" class="badge online">Cluster Online</span>
-  </header>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">H</span>
+        <div>
+          <strong>HERMES</strong>
+          <span>Embedded runtime</span>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Main">
+        <button type="button" class="nav-item active" data-view="board">
+          <span class="nav-icon">◉</span> Board
+        </button>
+        <button type="button" class="nav-item" data-view="studio">
+          <span class="nav-icon">✦</span> App Studio
+        </button>
+        <button type="button" class="nav-item" data-view="apps">
+          <span class="nav-icon">▣</span> Applications
+        </button>
+        <button type="button" class="nav-item" data-view="insights">
+          <span class="nav-icon">◧</span> Insights
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <label class="theme-picker" for="theme-select">
+          <span>Appearance</span>
+          <select id="theme-select" aria-label="Dashboard theme"></select>
+        </label>
+        <span id="cluster-status" class="status-chip warn">No board connected</span>
+      </div>
+    </aside>
 
-  <main>
-    <section class="nodes">
-      <h2>Nodes</h2>
-      <div class="grid" id="node-grid"></div>
-    </section>
+    <main class="content">
+      <section id="view-board" class="view active">
+        <header class="view-header">
+          <h1 id="nodes-heading">Board</h1>
+          <p id="header-subtitle" class="view-lead">Monitor your connected hardware.</p>
+        </header>
 
-    <section class="studio">
-      <h2>App Studio</h2>
-      <p class="hint">Create and customize apps from blueprints — no code required.</p>
-      <div class="studio-layout">
-        <div class="blueprint-list" id="blueprint-list"></div>
-        <form class="studio-form" id="studio-form">
-          <h3 id="studio-title">Select a blueprint</h3>
-          <div id="studio-fields"></div>
-          <div class="studio-actions">
-            <button type="button" id="btn-create-app" class="primary" disabled>Create &amp; Deploy</button>
+        <div id="board-hero" class="board-hero hidden">
+          <div class="board-hero-main">
+            <p class="eyebrow">Connected board</p>
+            <h2 id="board-name">—</h2>
+            <p class="board-meta"><span id="board-type">—</span> · <span id="board-status" class="status-chip">—</span></p>
           </div>
-        </form>
-      </div>
-    </section>
+          <div class="board-stats">
+            <div class="metric-tile"><span class="label">CPU</span><span id="board-cpu" class="value">—</span></div>
+            <div class="metric-tile"><span class="label">RAM</span><span id="board-ram" class="value">—</span></div>
+            <div class="metric-tile"><span class="label">Temp</span><span id="board-temp" class="value">—</span></div>
+            <div class="metric-tile"><span class="label">Power</span><span id="board-power" class="value">—</span></div>
+          </div>
+        </div>
 
-    <section class="apps">
-      <h2>Applications</h2>
-      <table id="app-table">
-        <thead>
-          <tr><th>Name</th><th>Blueprint</th><th>Node</th><th>State</th><th>Metrics</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="app-body"></tbody>
-      </table>
-      <button id="btn-deploy" class="secondary">Deploy from manifest (advanced)</button>
-    </section>
+        <p id="no-board-hint" class="empty-state">
+          No board connected yet. Flash firmware, start the control plane, then run the serial bridge:
+          <code>python scripts/flash_mcu.py esp8266 --port COM4 --bridge</code>
+        </p>
 
-    <section class="metrics">
-      <h2>Cluster Metrics</h2>
-      <div class="metric-cards">
-        <div class="card"><span class="label">Load</span><span id="m-load" class="value">32%</span></div>
-        <div class="card"><span class="label">Power</span><span id="m-power" class="value">1.2 W</span></div>
-        <div class="card"><span class="label">Temp</span><span id="m-temp" class="value">42°C</span></div>
-        <div class="card"><span class="label">Apps</span><span id="m-apps" class="value">3</span></div>
-      </div>
-      <h3>Load history</h3>
-      <div id="analytics-chart" class="analytics-chart"></div>
-    </section>
+        <div id="node-grid-section">
+          <div class="node-grid" id="node-grid"></div>
+        </div>
+        <div id="mesh-panel" class="group-card hidden"></div>
+      </section>
 
-    <section class="logs">
-      <h2>Logs</h2>
-      <pre id="log-output"></pre>
-    </section>
-  </main>
+      <section id="view-studio" class="view">
+        <header class="view-header">
+          <h1>App Studio</h1>
+          <p class="view-lead">Choose a blueprint, customize every field, then deploy.</p>
+        </header>
+        <div class="studio-shell">
+          <aside class="blueprint-rail" id="blueprint-list" aria-label="Blueprints"></aside>
+          <div class="studio-sheet">
+            <div class="studio-sheet-head">
+              <h2 id="studio-title">Select a blueprint</h2>
+              <p id="studio-hint" class="view-lead">Pick a template on the left to begin.</p>
+            </div>
+            <div id="studio-metrics" class="studio-metrics hidden"></div>
+            <form class="studio-form" id="studio-form" onsubmit="return false">
+              <div id="studio-fields" class="field-stack"></div>
+              <div class="studio-actions">
+                <button type="button" id="btn-create-app" class="btn btn-primary" disabled>Create &amp; Deploy</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
 
-  <div id="config-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3 id="config-modal-title">Configure App</h3>
-      <form id="config-form"></form>
+      <section id="view-apps" class="view">
+        <header class="view-header">
+          <h1>Applications</h1>
+          <p class="view-lead">Installed apps running on your boards.</p>
+        </header>
+        <div id="apps-section">
+          <div id="app-list" class="app-list"></div>
+          <button id="btn-deploy" class="btn btn-secondary" type="button">Deploy from manifest</button>
+        </div>
+      </section>
+
+      <section id="view-insights" class="view">
+        <header class="view-header">
+          <h1 id="metrics-heading">Insights</h1>
+          <p class="view-lead">Cluster load, power, and activity.</p>
+        </header>
+        <div class="metric-grid">
+          <div class="metric-tile large"><span class="label">Load</span><span id="m-load" class="value">0%</span></div>
+          <div class="metric-tile large"><span class="label">Power</span><span id="m-power" class="value">0 W</span></div>
+          <div class="metric-tile large"><span class="label">Temp</span><span id="m-temp" class="value">—</span></div>
+          <div class="metric-tile large"><span class="label">Apps</span><span id="m-apps" class="value">0</span></div>
+        </div>
+        <div class="group-card">
+          <h3 class="group-title">Load history</h3>
+          <div id="analytics-chart" class="analytics-chart"></div>
+        </div>
+        <div class="group-card">
+          <h3 class="group-title">Activity</h3>
+          <pre id="log-output" class="log-stream"></pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <div id="config-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <h3 id="config-modal-title">Customize App</h3>
+      <form id="config-form" class="field-stack"></form>
       <div class="modal-actions">
-        <button type="button" id="btn-config-cancel" class="secondary">Cancel</button>
-        <button type="button" id="btn-config-save" class="primary">Save</button>
+        <button type="button" id="btn-config-cancel" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="btn-config-save" class="btn btn-primary">Save</button>
       </div>
     </div>
   </div>

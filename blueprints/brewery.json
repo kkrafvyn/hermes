@@ -1,0 +1,67 @@
+{
+  "id": "brewery",
+  "name": "Brewery",
+  "description": "Fermentation temp, pressure, and pH monitoring",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "batch_name",
+      "label": "Batch Name",
+      "type": "text",
+      "default": "Batch 42",
+      "required": true
+    },
+    {
+      "key": "ferment_temp_c",
+      "label": "Ferment temp (C)",
+      "type": "number",
+      "default": 18,
+      "min": 10,
+      "max": 25
+    },
+    {
+      "key": "ph_target",
+      "label": "pH target",
+      "type": "number",
+      "default": 5.2,
+      "min": 4,
+      "max": 6
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ph",
+        "temp_humidity",
+        "pressure",
+        "co2"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "ferment_temp_c",
+      "label": "Ferment temp",
+      "unit": "C"
+    },
+    {
+      "key": "ph_level",
+      "label": "pH",
+      "unit": "pH"
+    },
+    {
+      "key": "co2_ppm",
+      "label": "CO2",
+      "unit": "ppm"
+    }
+  ]
+}

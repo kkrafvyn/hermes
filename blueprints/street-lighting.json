@@ -1,0 +1,65 @@
+{
+  "id": "street-lighting",
+  "name": "Street Lighting",
+  "description": "Dusk-to-dawn street and path lighting",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "circuit_name",
+      "label": "Circuit Name",
+      "type": "text",
+      "default": "Block 12",
+      "required": true
+    },
+    {
+      "key": "lights_count",
+      "label": "Fixtures",
+      "type": "number",
+      "default": 12,
+      "min": 1,
+      "max": 50
+    },
+    {
+      "key": "lux_on",
+      "label": "On below (lux)",
+      "type": "number",
+      "default": 30,
+      "min": 5,
+      "max": 100
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "lux",
+        "motion_pir",
+        "current_clamp"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "fixtures_on",
+      "label": "Fixtures on"
+    },
+    {
+      "key": "circuit_kw",
+      "label": "Circuit power",
+      "unit": "kW"
+    },
+    {
+      "key": "schedule_active",
+      "label": "Schedule",
+      "type": "bool"
+    }
+  ]
+}

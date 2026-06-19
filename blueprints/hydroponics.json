@@ -1,0 +1,74 @@
+{
+  "id": "hydroponics",
+  "name": "Hydroponics",
+  "description": "Nutrient film / DWC pH, EC, and water level control",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "system_name",
+      "label": "System Name",
+      "type": "text",
+      "default": "Grow Rack 1",
+      "required": true
+    },
+    {
+      "key": "ph_target",
+      "label": "pH target",
+      "type": "number",
+      "default": 6.2,
+      "min": 5.5,
+      "max": 7.5
+    },
+    {
+      "key": "ec_target",
+      "label": "EC target (mS/cm)",
+      "type": "number",
+      "default": 1.8,
+      "min": 0.5,
+      "max": 4.0
+    },
+    {
+      "key": "auto_dose",
+      "label": "Auto nutrient dosing",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ph",
+        "soil_ec",
+        "water_level",
+        "temp_humidity",
+        "flow_meter"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "ph_level",
+      "label": "pH",
+      "unit": "pH"
+    },
+    {
+      "key": "ec_ms",
+      "label": "EC",
+      "unit": "mS/cm"
+    },
+    {
+      "key": "pump_active",
+      "label": "Pump",
+      "type": "bool"
+    }
+  ]
+}

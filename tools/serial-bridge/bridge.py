@@ -58,7 +58,7 @@ def main() -> None:
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--api", default=API_URL)
     parser.add_argument("--register", action="store_true", help="Register node on start")
-    parser.add_argument("--node-id", type=int, default=1)
+    parser.add_argument("--node-id", type=int, default=0)
     parser.add_argument("--name", default="", help="Node display name (e.g. ESP8266)")
     parser.add_argument("--node-type", default="", help="Node type (e.g. esp8266)")
     args = parser.parse_args()
@@ -77,10 +77,12 @@ def main() -> None:
             sys.exit(1)
         names = {0: "STM32H7", 1: "ESP32-S3", 2: "nRF52840"}
         types = {0: "stm32", 1: "esp32", 2: "nrf"}
+        display_name = args.name or names.get(args.node_id) or f"Board-{args.node_id}"
+        mcu_type = args.node_type or types.get(args.node_id) or "mcu"
         api_post("/api/nodes/register", {
             "node_id": args.node_id,
-            "name": args.name or names.get(args.node_id, f"node-{args.node_id}"),
-            "node_type": args.node_type or types.get(args.node_id, "unknown"),
+            "name": display_name,
+            "node_type": mcu_type,
             "agent": True,
         })
         print(f"Registered node {args.node_id}")
@@ -94,6 +96,16 @@ def main() -> None:
             try:
                 msg = json.loads(line)
             except json.JSONDecodeError:
+                continue
+            if msg.get("mesh"):
+                try:
+                    api_post("/api/nodes/heartbeat", {
+                        "node_id": msg.get("node_id", args.node_id),
+                        "mesh": msg,
+                    })
+                except Exception:
+                    pass
+                print(f"  mesh node {msg.get('node_id')} OK")
                 continue
             node_id = msg.get("node_id", args.node_id)
             telemetry = msg.get("telemetry", msg)

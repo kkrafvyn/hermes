@@ -1,0 +1,65 @@
+{
+  "id": "wine-cellar",
+  "name": "Wine Cellar",
+  "description": "Cellar temperature and humidity for wine storage",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "cellar_name",
+      "label": "Cellar Name",
+      "type": "text",
+      "default": "Cellar A",
+      "required": true
+    },
+    {
+      "key": "target_temp_c",
+      "label": "Target temp (C)",
+      "type": "number",
+      "default": 14,
+      "min": 10,
+      "max": 18
+    },
+    {
+      "key": "target_humidity",
+      "label": "Target humidity (%)",
+      "type": "number",
+      "default": 65,
+      "min": 50,
+      "max": 80
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "ds18b20"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "cellar_temp_c",
+      "label": "Cellar temp",
+      "unit": "C"
+    },
+    {
+      "key": "humidity_pct",
+      "label": "Humidity",
+      "unit": "%"
+    },
+    {
+      "key": "in_range",
+      "label": "In range",
+      "type": "bool"
+    }
+  ]
+}

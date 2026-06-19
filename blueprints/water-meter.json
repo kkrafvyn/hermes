@@ -1,0 +1,66 @@
+{
+  "id": "water-meter",
+  "name": "Water Meter",
+  "description": "Domestic water flow and leak detection",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "meter_name",
+      "label": "Meter Name",
+      "type": "text",
+      "default": "Main Supply",
+      "required": true
+    },
+    {
+      "key": "leak_flow_lpm",
+      "label": "Leak threshold (L/min)",
+      "type": "number",
+      "default": 0.5,
+      "min": 0.1,
+      "max": 5
+    },
+    {
+      "key": "daily_alert_l",
+      "label": "Daily use alert (L)",
+      "type": "number",
+      "default": 500,
+      "min": 100,
+      "max": 2000
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "flow_meter",
+        "water_leak",
+        "pressure"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "flow_lpm",
+      "label": "Flow",
+      "unit": "L/min"
+    },
+    {
+      "key": "daily_liters",
+      "label": "Daily use",
+      "unit": "L"
+    },
+    {
+      "key": "leak_detected",
+      "label": "Leak",
+      "type": "bool"
+    }
+  ]
+}

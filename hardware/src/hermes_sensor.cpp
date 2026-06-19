@@ -6,6 +6,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#if defined(HERMES_HTTP_SERVER)
+#include "hermes_mesh.h"
+#endif
+
 static char s_ids[HERMES_MAX_SENSORS][HERMES_SENSOR_ID_LEN];
 static hermes_sensor_reading_t s_readings[HERMES_MAX_SENSORS];
 static size_t s_count = 0;
@@ -139,6 +143,45 @@ int hermes_sensor_json(char *buf, size_t max) {
         if (m < 0 || off + (size_t)m >= max) break;
         off += (size_t)m;
     }
+    if (off + 2 < max) {
+        buf[off++] = ']';
+        buf[off] = '\0';
+    }
+    return (int)off;
+}
+
+int hermes_sensor_json_all(char *buf, size_t max) {
+    if (!buf || max < 24) return 0;
+    int n = snprintf(buf, max, ",\"sensors\":[");
+    if (n < 0 || (size_t)n >= max) return 0;
+    size_t off = (size_t)n;
+    bool first = true;
+    for (size_t i = 0; i < s_count; ++i) {
+        int m = snprintf(buf + off, max - off,
+            "%s{\"id\":\"%s\",\"source\":\"local\",\"value\":%.2f,\"unit\":\"%s\"}",
+            first ? "" : ",", s_readings[i].id, (double)s_readings[i].value,
+            s_readings[i].unit ? s_readings[i].unit : "");
+        if (m < 0 || off + (size_t)m >= max) break;
+        off += (size_t)m;
+        first = false;
+    }
+#if defined(HERMES_HTTP_SERVER)
+    if (hermes_mesh_enabled()) {
+        for (size_t mi = 0; off < max - 48; mi++) {
+            const hermes_mesh_node_t *node = hermes_mesh_get_node(mi);
+            if (!node) break;
+            for (uint8_t r = 0; r < node->reading_count && off < max - 48; r++) {
+                int m = snprintf(buf + off, max - off,
+                    "%s{\"id\":\"n%u:%s\",\"source\":\"mesh\",\"node_id\":%u,\"value\":%.2f}",
+                    first ? "" : ",", node->node_id, node->reading_ids[r], node->node_id,
+                    (double)node->readings[r]);
+                if (m < 0 || off + (size_t)m >= max) break;
+                off += (size_t)m;
+                first = false;
+            }
+        }
+    }
+#endif
     if (off + 2 < max) {
         buf[off++] = ']';
         buf[off] = '\0';

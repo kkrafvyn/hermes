@@ -1,0 +1,66 @@
+{
+  "id": "compost-monitor",
+  "name": "Compost Monitor",
+  "description": "Compost pile temperature and moisture tracking",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "site_name",
+      "label": "Site Name",
+      "type": "text",
+      "default": "Compost Bay A",
+      "required": true
+    },
+    {
+      "key": "temp_alert_c",
+      "label": "High temp alert (C)",
+      "type": "number",
+      "default": 65,
+      "min": 40,
+      "max": 80
+    },
+    {
+      "key": "moisture_min",
+      "label": "Min moisture (%)",
+      "type": "number",
+      "default": 40,
+      "min": 20,
+      "max": 60
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ds18b20",
+        "soil_moisture",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "core_temp_c",
+      "label": "Core temp",
+      "unit": "C"
+    },
+    {
+      "key": "moisture_pct",
+      "label": "Moisture",
+      "unit": "%"
+    },
+    {
+      "key": "turn_due",
+      "label": "Turn due",
+      "type": "bool"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.errorSquiggles": "disabled",
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/compile_commands.json",
+  "C_Cpp.default.cppStandard": "gnu++17",
+  "clangd.enable": true,
+  "clangd.arguments": [
+    "--compile-commands-dir=${workspaceFolder}",
+    "--query-driver=**/.platformio/packages/toolchain-*/bin/*",
+    "--background-index",
+    "--clang-tidy=false"
+  ],
+  "files.associations": {
+    "*.ini": "ini"
+  }
+}
