@@ -87,21 +87,32 @@ curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/mcus/esp32c6/depl
 
 ## Step 3 — Flash your board
 
-Replace `COM4` with your port (`Device Manager` → Ports on Windows, `/dev/ttyUSB0` on Linux).
+The flash script **auto-detects your serial port** when you omit `--port`. It prefers USB-UART adapters (CH340, CP210x, FTDI, etc.).
+
+```bash
+# Auto-detect port and flash
+python scripts/flash_mcu.py esp8266
+
+# List connected ports
+python scripts/flash_mcu.py --list-ports
+
+# Flash + immediately start serial bridge
+python scripts/flash_mcu.py esp8266 --bridge
+
+# Force a specific port
+python scripts/flash_mcu.py esp8266 --port COM4
+```
+
+Replace `COM4` only when auto-detect picks the wrong port (multiple devices plugged in).
 
 ### Path A — Direct PIO (most boards)
 
 Examples:
 
 ```bash
-# ESP8266 / NodeMCU / D1 Mini
-python scripts/flash_mcu.py esp8266 --port COM4
-python scripts/flash_mcu.py d1_mini --port COM4
-
-# ESP32 family
-python scripts/flash_mcu.py esp32 --port COM4
-python scripts/flash_mcu.py esp32s3 --port COM4
-python scripts/flash_mcu.py esp32c3 --port COM4
+# ESP8266 / NodeMCU / D1 Mini (port auto-detected)
+python scripts/flash_mcu.py esp8266
+python scripts/flash_mcu.py d1_mini
 
 # STM32
 python scripts/flash_mcu.py stm32h7 --port COM6

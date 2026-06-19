@@ -15,11 +15,11 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from pio_env import apply as apply_pio_env  # noqa: E402
 from mcu_registry import (  # noqa: E402
     all_targets,
-    deploy_approach,
     deploy_approaches_summary,
     deploy_plan,
     resolve_build,
 )
+from serial_ports import detect_port, list_ports, print_ports  # noqa: E402
 
 apply_pio_env()
 
@@ -34,6 +34,23 @@ def find_pio() -> str | None:
             return p
         except (FileNotFoundError, subprocess.CalledProcessError):
             continue
+    return None
+
+
+def resolve_upload_port(explicit: str | None, auto: bool) -> str | None:
+    """Resolve serial port: explicit flag, auto-detect, or None."""
+    if explicit:
+        return explicit
+    if not auto:
+        return None
+    port = detect_port()
+    if port:
+        print_ports(selected=port)
+        print(f"\nAuto-selected port: {port}")
+        return port
+    print_ports()
+    print("\nNo serial port found — build will run without upload.")
+    print("Connect the board or pass --port COMx")
     return None
 
 
@@ -64,7 +81,14 @@ def print_plan(target_id: str) -> int:
     return 0
 
 
-def run_pio_build(target_id: str, port: str | None, upload: bool) -> int:
+def run_pio_build(
+    target_id: str,
+    port: str | None,
+    upload: bool,
+    auto_port: bool,
+    bridge: bool,
+    node_id: int,
+) -> int:
     plan = deploy_plan(target_id)
     approach = plan.get("approach")
     if approach not in ("direct_pio", "flash_alias"):
@@ -87,25 +111,42 @@ def run_pio_build(target_id: str, port: str | None, upload: bool) -> int:
         print(f"Path not found: {path}")
         return 1
 
+    upload_port = None
+    if upload:
+        upload_port = resolve_upload_port(port, auto_port)
+        if not upload_port:
+            print("Refusing to upload without a serial port. Use --port COMx or connect the board.")
+            return 1
+
     cmd = [pio, "run", "-e", spec["env"], "-d", str(path)]
     if upload:
-        cmd.append("-t")
-        cmd.append("upload")
-        if port:
-            cmd.extend(["--upload-port", port])
+        cmd.extend(["-t", "upload", "--upload-port", upload_port])
 
     label = target_id if approach == "direct_pio" else f"{target_id} (via {spec['builds_as']})"
-    print(f"BUILD {label}: {' '.join(cmd)}")
+    print(f"\nBUILD {label}: {' '.join(cmd)}")
     rc = subprocess.call(cmd, env=os.environ.copy())
     if rc != 0:
         return rc
 
-    if upload and port:
-        print("\nNext — start control plane and serial bridge:")
-        print("  python run.py")
-        print(
-            f"  python tools/serial-bridge/bridge.py {port} --register "
-            f"--node-id 1 --name \"{plan['name']}\" --node-type {target_id}"
+    print(f"\nFlash OK on {upload_port}")
+    bridge_cmd = (
+        f"python tools/serial-bridge/bridge.py {upload_port} --register "
+        f"--node-id {node_id} --name \"{plan['name']}\" --node-type {target_id}"
+    )
+    print("\nNext — start control plane and serial bridge:")
+    print("  python run.py")
+    print(f"  {bridge_cmd}")
+
+    if bridge:
+        print("\nStarting serial bridge (Ctrl+C to stop)...")
+        bridge_path = ROOT / "tools" / "serial-bridge" / "bridge.py"
+        return subprocess.call(
+            [
+                sys.executable, str(bridge_path), upload_port,
+                "--register", "--node-id", str(node_id),
+                "--name", plan["name"], "--node-type", target_id,
+            ],
+            cwd=str(ROOT),
         )
     return 0
 
@@ -122,14 +163,28 @@ def list_approaches() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="HERMES MCU deploy — direct PIO, flash alias, port, or coprocessor plan"
+        description="HERMES MCU deploy — auto-detects serial port, builds, and flashes"
     )
-    parser.add_argument("mcu", nargs="?", help="Registry target id (e.g. esp32c6, pic16, cc2531)")
-    parser.add_argument("--port", "-p", help="Serial port for upload/bridge (e.g. COM4)")
+    parser.add_argument("mcu", nargs="?", help="Registry target id (e.g. esp32c6, esp8266)")
+    parser.add_argument("--port", "-p", help="Serial port (auto-detected if omitted)")
     parser.add_argument("--list", action="store_true", help="List all targets by deploy approach")
+    parser.add_argument("--list-ports", action="store_true", help="List connected serial ports")
     parser.add_argument("--plan-only", action="store_true", help="Print deploy steps without building")
     parser.add_argument("--no-upload", action="store_true", help="Build only, do not flash")
+    parser.add_argument(
+        "--no-auto-port", action="store_true",
+        help="Do not auto-detect port (upload requires --port)",
+    )
+    parser.add_argument(
+        "--bridge", action="store_true",
+        help="After flash, start serial-bridge and register the node",
+    )
+    parser.add_argument("--node-id", type=int, default=1, help="Node id for --bridge (default 1)")
     args = parser.parse_args()
+
+    if args.list_ports:
+        print_ports()
+        return 0 if list_ports() else 1
 
     if args.list:
         list_approaches()
@@ -138,6 +193,10 @@ def main() -> int:
 
     if not args.mcu:
         parser.print_help()
+        print("\nExamples:")
+        print("  python scripts/flash_mcu.py esp8266          # auto-detect port + flash")
+        print("  python scripts/flash_mcu.py esp32c3 --bridge # flash then register node")
+        print("  python scripts/flash_mcu.py --list-ports")
         return 1
 
     if args.mcu not in all_targets():
@@ -148,7 +207,14 @@ def main() -> int:
     if args.plan_only:
         return print_plan(args.mcu)
 
-    return run_pio_build(args.mcu, args.port, upload=not args.no_upload)
+    return run_pio_build(
+        args.mcu,
+        args.port,
+        upload=not args.no_upload,
+        auto_port=not args.no_auto_port,
+        bridge=args.bridge,
+        node_id=args.node_id,
+    )
 
 
 if __name__ == "__main__":

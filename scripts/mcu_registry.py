@@ -241,7 +241,7 @@ def deploy_approaches_summary() -> dict:
         },
         "cli": {
             "list": "python scripts/flash_mcu.py --list",
-            "flash": "python scripts/flash_mcu.py <mcu_id> --port COM4",
+            "flash": "python scripts/flash_mcu.py <mcu_id>",
             "plan": "python scripts/flash_mcu.py <mcu_id> --plan-only",
             "coprocessor": "python scripts/setup_coprocessor.py <mcu_id>",
         },
