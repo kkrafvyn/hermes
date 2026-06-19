@@ -109,9 +109,16 @@ curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/analytics
 ```bash
 curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/mcus
 curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/sensors
+
+# Deploy approach per target (direct_pio | flash_alias | sdk_port | coprocessor)
+curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/deploy/approaches
+
+# Step-by-step deploy plan for one MCU
+curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/mcus/esp32c6/deploy
+curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/mcus/pic16/deploy
 ```
 
-`/api/mcus` returns all 60 targets with `tier`, `workaround`, and `flash_command` per entry.
+`/api/mcus` returns all 60 targets with `approach`, `workaround`, `flash_command`, and `deploy_url`.
 
 ### Blueprints (App Studio)
 

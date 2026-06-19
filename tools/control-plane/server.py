@@ -176,6 +176,22 @@ class Handler(BaseHTTPRequestHandler):
             from mcu_registry import mcu_summary  # noqa: E402
             return self._json(200, mcu_summary())
 
+        if path == "/api/deploy/approaches":
+
+            from mcu_deploy import deploy_approaches_summary  # noqa: E402
+            return self._json(200, deploy_approaches_summary())
+
+        if path.startswith("/api/mcus/") and path.endswith("/deploy"):
+
+            sys.path.insert(0, str(ROOT / "scripts"))
+            from mcu_registry import all_targets  # noqa: E402
+            from mcu_deploy import deploy_plan_detail  # noqa: E402
+            tid = path.split("/")[3]
+            if tid not in all_targets():
+                return self._json(404, {"error": f"unknown mcu: {tid}"})
+            result = deploy_plan_detail(tid)
+            return self._json(200, result)
+
         if path == "/api/sensors":
 
             from sensors import catalog_summary  # noqa: E402

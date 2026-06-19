@@ -10,6 +10,7 @@ HERMES is not task migration. It is a **tiny distributed operating system for mi
 
 | Document | Description |
 |----------|-------------|
+| **[User Guide — How to Use on Any Board](docs/USER_GUIDE.md)** | **Start here — flash, bridge, App Studio, all 60 MCUs** |
 | **[Complete Project Documentation](docs/HERMES_COMPLETE_DOCUMENTATION.md)** | **Submission-ready — MCUs, sensors, build matrix, deployment** |
 | [Documentation Index](docs/README.md) | All guides — gaps closed, full index |
 | [Full Project Documentation](docs/PROJECT_DOCUMENTATION.md) | Extended technical reference |

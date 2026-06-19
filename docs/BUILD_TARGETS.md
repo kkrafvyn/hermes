@@ -7,21 +7,24 @@ Build verification: `python scripts/summarize_mcu_build.py` → `build/mcu_build
 ## Quick commands
 
 ```bash
-# List all targets
-python scripts/build_all.py --list
+# List all targets by deploy approach (direct / alias / port / coprocessor)
+python scripts/flash_mcu.py --list
 
-# Build entire MCU matrix (sequential, ~hours)
+# Build + flash any MCU (direct or alias)
+python scripts/flash_mcu.py esp32c6 --port COM4
+python scripts/flash_mcu.py stm32h7 --port COM6
+
+# Show steps only (port / coprocessor / alias)
+python scripts/flash_mcu.py pic16 --plan-only
+python scripts/setup_coprocessor.py cc2531 --port COM5
+
+# API deploy plans
+curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/deploy/approaches
+curl -H "X-Hermes-Token: hermes-dev" http://localhost:8787/api/mcus/esp32c6/deploy
+
+# Full matrix build (36 PIO envs)
 python scripts/build_mcu_check.py --timeout 3600
 python scripts/summarize_mcu_build.py
-
-# Retry only failed envs
-python scripts/build_mcu_check.py --retry-failed
-
-# Build one target + flash
-python scripts/build_all.py --firmware --target esp8266 --upload-port COM4
-
-# SDK app for every MCU
-python sdk/build.py examples/smartfarm all
 ```
 
 ## Build summary output

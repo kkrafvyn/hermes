@@ -10,7 +10,8 @@ Targets that do not have a direct PlatformIO build use one of three **production
 | **coprocessor** | Zigbee/radio dongle — cluster link, not a full App Studio node |
 
 Registry: `hardware/mcu_registry.json`  
-API: `GET /api/mcus` (each target includes `workaround` + `flash_command`)  
+API: `GET /api/mcus`, `GET /api/mcus/<id>/deploy`, `GET /api/deploy/approaches`  
+CLI: `python scripts/flash_mcu.py --list` | `python scripts/flash_mcu.py <id> --port COM4`  
 Build summary: `python scripts/summarize_mcu_build.py` → `build/mcu_build_summary.txt`
 
 ## Flash aliases (production firmware from sibling target)

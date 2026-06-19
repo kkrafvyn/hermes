@@ -4,6 +4,7 @@
 
 | Document | Audience | Purpose |
 |----------|----------|---------|
+| **[USER_GUIDE.md](USER_GUIDE.md)** | Everyone | **How to use HERMES on any board — step-by-step** |
 | **[HERMES_COMPLETE_DOCUMENTATION.md](HERMES_COMPLETE_DOCUMENTATION.md)** | Submission, reviewers | **Master doc — architecture, 60 MCUs, 37 sensors, 26 blueprints** |
 | [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md) | Engineers | Extended 18-section technical reference |
 | [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) | Product, stakeholders | SRO — 12 capability areas, mission |
