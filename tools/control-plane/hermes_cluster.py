@@ -19,8 +19,8 @@ from blueprint_engine import init_runtime, tick as blueprint_tick, display_label
 
 
 def _verify_binary(binary_path: Path, manifest: dict) -> str | None:
-    """Return error string or None if OK."""
-    if not binary_path.exists():
+    """Return error string or None if OK. Skips when no binary file."""
+    if not binary_path.is_file():
         return None
     import hashlib
     data = binary_path.read_bytes()
@@ -460,11 +460,7 @@ class ClusterManager:
     def install_app(self, manifest_path: Path) -> dict:
         data = json.loads(manifest_path.read_text())
         name = data["name"]
-        manifest_dir = manifest_path.parent
-        binary_rel = data.get("binary_path", "")
-        binary_path = manifest_dir / Path(binary_rel).name if binary_rel else manifest_dir / f"{name}.bin"
-        if not binary_path.exists() and (ROOT / binary_rel).exists():
-            binary_path = ROOT / binary_rel
+        binary_path = self._resolve_binary_path(manifest_path, data)
         with self._lock:
             if name in self.apps:
                 return {"error": f"{name} already installed"}
@@ -472,9 +468,10 @@ class ClusterManager:
             digest = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
             if data.get("sha256") and data["sha256"] != digest:
                 return {"error": "manifest signature mismatch"}
-            err = _verify_binary(binary_path, data)
-            if err:
-                return {"error": err}
+            if binary_path:
+                err = _verify_binary(binary_path, data)
+                if err:
+                    return {"error": err}
             node_id = self._pick_node(data.get("memory", "64KB"))
             mem = _parse_memory(data.get("memory", "64KB"))
             self.apps[name] = App(
@@ -486,20 +483,51 @@ class ClusterManager:
                 priority=data.get("priority", 5),
             )
             self._quotas[name] = {"cpu": 30, "memory_kb": mem}
+            rel_binary = ""
+            if binary_path and binary_path.is_file():
+                rel_binary = (
+                    str(binary_path.relative_to(ROOT)).replace("\\", "/")
+                    if binary_path.is_relative_to(ROOT)
+                    else str(binary_path)
+                )
             binary_payload = {
                 "version": data.get("version"),
                 "sha256": digest,
                 "binary_sha256": data.get("binary_sha256", ""),
-                "binary_path": str(binary_path.relative_to(ROOT)).replace("\\", "/")
-                if binary_path.is_relative_to(ROOT) else str(binary_path),
+                "binary_path": rel_binary,
                 "memory_kb": mem,
                 "cpu_quota": 30,
             }
-            self._log(f"Installed {name} v{data.get('version')} on node {node_id} (binary verified)")
+            note = "binary verified" if binary_path else "metadata only"
+            self._log(f"Installed {name} v{data.get('version')} on node {node_id} ({note})")
             self._enqueue(node_id, "install_app", name, binary_payload)
             result = self.apps[name].to_dict()
         self._persist()
         return result
+
+    @staticmethod
+    def _resolve_binary_path(manifest_path: Path, data: dict) -> Path | None:
+        """Locate app binary next to manifest or under examples/…/binaries."""
+        name = data["name"]
+        manifest_dir = manifest_path.parent
+        binary_rel = (data.get("binary_path") or "").strip()
+        candidates: list[Path] = []
+        if binary_rel:
+            rel = Path(binary_rel)
+            if rel.is_absolute():
+                candidates.append(rel)
+            else:
+                candidates.append(manifest_dir / rel)
+                candidates.append(manifest_dir / rel.name)
+                candidates.append(ROOT / rel)
+        else:
+            candidates.append(manifest_dir / f"{name}.bin")
+            candidates.append(manifest_dir / "binaries" / f"{name}.bin")
+            candidates.append(ROOT / "examples" / name / "binaries" / f"{name}.bin")
+        for path in candidates:
+            if path.is_file():
+                return path
+        return None
 
     def _pick_node(self, memory: str) -> int:
         mem_kb = _parse_memory(memory)
