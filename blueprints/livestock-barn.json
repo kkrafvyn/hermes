@@ -1,0 +1,21 @@
+{
+  "id": "livestock-barn",
+  "name": "Livestock Barn",
+  "description": "Barn climate, ammonia, water, and ventilation",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    { "key": "barn_name", "label": "Barn name", "type": "text", "default": "Barn A", "required": true },
+    { "key": "max_temp_c", "label": "Max temperature (°C)", "type": "number", "min": 10, "max": 40, "default": 28 },
+    { "key": "ammonia_alert_ppm", "label": "Ammonia alert (ppm)", "type": "number", "min": 0, "max": 100, "default": 25 },
+    { "key": "auto_vent", "label": "Auto ventilation", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["temp_humidity", "ammonia", "water_level", "motion_pir"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 0 }
+  ],
+  "metrics": [
+    { "key": "barn_temp_c", "label": "Barn temp", "unit": "°C" },
+    { "key": "ammonia_ppm", "label": "Ammonia", "unit": "ppm" },
+    { "key": "vents_on", "label": "Vents on", "type": "bool" }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "asset-tracker",
+  "name": "Asset Tracker",
+  "description": "BLE/GPS asset tracking and geofence alerts",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 4,
+  "fields": [
+    { "key": "tracker_name", "label": "Tracker name", "type": "text", "default": "Fleet Tracker", "required": true },
+    { "key": "tag_count", "label": "BLE tags", "type": "number", "min": 1, "max": 64, "default": 8 },
+    { "key": "geofence_m", "label": "Geofence radius (m)", "type": "number", "min": 10, "max": 5000, "default": 200 },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["ble_rssi", "gps", "accelerometer"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 2 }
+  ],
+  "metrics": [
+    { "key": "tags_in_range", "label": "Tags in range", "unit": "" },
+    { "key": "last_rssi", "label": "Last RSSI", "unit": "dBm" },
+    { "key": "geofence_ok", "label": "Inside geofence", "type": "bool" }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "parking-gate",
+  "name": "Parking & Gate",
+  "description": "Parking occupancy, barrier control, access counting",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    { "key": "lot_name", "label": "Lot / gate name", "type": "text", "default": "Main Lot", "required": true },
+    { "key": "capacity", "label": "Parking capacity", "type": "number", "min": 1, "max": 500, "default": 50 },
+    { "key": "barrier_auto", "label": "Auto barrier", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["motion_pir", "ultrasonic", "door_contact"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 1 }
+  ],
+  "metrics": [
+    { "key": "occupancy", "label": "Occupancy", "unit": "" },
+    { "key": "barrier_open", "label": "Barrier open", "type": "bool" },
+    { "key": "spaces_free", "label": "Spaces free", "unit": "" }
+  ]
+}

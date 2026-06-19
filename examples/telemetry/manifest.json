@@ -1,0 +1,8 @@
+{
+  "name": "telemetry",
+  "version": "0.2.1",
+  "targets": ["esp32"],
+  "memory": "64KB",
+  "priority": 4,
+  "description": "Cluster telemetry aggregation"
+}

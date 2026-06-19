@@ -1,0 +1,8 @@
+{
+  "name": "smartfarm",
+  "version": "1.0.0",
+  "targets": ["stm32", "esp32"],
+  "memory": "128KB",
+  "priority": 5,
+  "description": "Soil moisture, irrigation control, telemetry"
+}

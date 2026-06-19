@@ -1,0 +1,20 @@
+{
+  "id": "elder-care",
+  "name": "Elder Care Monitor",
+  "description": "Room comfort, motion, and fall-risk monitoring",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 6,
+  "fields": [
+    { "key": "care_site_name", "label": "Room / site", "type": "text", "default": "Room 12", "required": true },
+    { "key": "night_check", "label": "Night motion checks", "type": "toggle", "default": true },
+    { "key": "temp_min_c", "label": "Min comfort temp (°C)", "type": "number", "min": 15, "max": 25, "default": 18 },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["motion_pir", "door_contact", "temp_humidity", "accelerometer"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 2 }
+  ],
+  "metrics": [
+    { "key": "room_temp_c", "label": "Room temp", "unit": "°C" },
+    { "key": "motion_today", "label": "Motion events", "unit": "" },
+    { "key": "alert_active", "label": "Alert active", "type": "bool" }
+  ]
+}

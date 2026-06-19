@@ -1,0 +1,20 @@
+{
+  "id": "ev-charger",
+  "name": "EV Charger",
+  "description": "EV charging with load management and session tracking",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 5,
+  "fields": [
+    { "key": "charger_name", "label": "Charger name", "type": "text", "default": "Garage EVSE", "required": true },
+    { "key": "max_current_a", "label": "Max current (A)", "type": "number", "min": 6, "max": 80, "default": 32 },
+    { "key": "off_peak_only", "label": "Off-peak charging only", "type": "toggle", "default": false },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["current_clamp", "temp_humidity", "voltage"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 1 }
+  ],
+  "metrics": [
+    { "key": "charge_current_a", "label": "Charge current", "unit": "A" },
+    { "key": "session_kwh", "label": "Session energy", "unit": "kWh" },
+    { "key": "charging", "label": "Charging", "type": "bool" }
+  ]
+}

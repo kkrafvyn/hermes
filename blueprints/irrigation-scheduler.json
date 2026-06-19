@@ -1,0 +1,21 @@
+{
+  "id": "irrigation-scheduler",
+  "name": "Irrigation Scheduler",
+  "description": "Multi-zone irrigation with rain skip and soil feedback",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    { "key": "zone_name", "label": "Zone name", "type": "text", "default": "Zone 1", "required": true },
+    { "key": "zones", "label": "Number of zones", "type": "number", "min": 1, "max": 16, "default": 4 },
+    { "key": "schedule_minutes", "label": "Water duration (min)", "type": "number", "min": 1, "max": 120, "default": 15 },
+    { "key": "rain_skip", "label": "Skip if rain detected", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["soil_moisture", "rain_gauge", "flow_meter", "water_level"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 0 }
+  ],
+  "metrics": [
+    { "key": "zones_active", "label": "Zones watering", "unit": "" },
+    { "key": "soil_moisture", "label": "Soil moisture", "unit": "%" },
+    { "key": "rain_skip_active", "label": "Rain skip", "type": "bool" }
+  ]
+}

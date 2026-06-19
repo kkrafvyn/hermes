@@ -1,0 +1,73 @@
+{
+  "id": "smartfarm",
+  "name": "Smart Farm",
+  "description": "Soil moisture monitoring and automated irrigation",
+  "version": "1.0.0",
+  "memory": "128KB",
+  "priority": 5,
+  "fields": [
+    {
+      "key": "zone_name",
+      "label": "Zone name",
+      "type": "text",
+      "default": "Field 1",
+      "required": true
+    },
+    {
+      "key": "moisture_threshold",
+      "label": "Moisture threshold (%)",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "default": 30
+    },
+    {
+      "key": "auto_irrigate",
+      "label": "Auto irrigate",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "check_interval_sec",
+      "label": "Check interval (sec)",
+      "type": "number",
+      "min": 10,
+      "max": 3600,
+      "default": 300
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "soil_moisture",
+        "soil_ec",
+        "rain_gauge",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "soil_moisture",
+      "label": "Soil moisture",
+      "unit": "%"
+    },
+    {
+      "key": "pump_active",
+      "label": "Pump active",
+      "type": "bool"
+    },
+    {
+      "key": "irrigation_cycles",
+      "label": "Irrigation cycles",
+      "unit": ""
+    }
+  ]
+}

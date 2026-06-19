@@ -1,0 +1,80 @@
+{
+  "id": "cold-chain",
+  "name": "Cold Chain",
+  "description": "Temperature compliance for food, pharma, and logistics",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 6,
+  "fields": [
+    {
+      "key": "site_name",
+      "label": "Shipment / site name",
+      "type": "text",
+      "default": "Cold Box 12",
+      "required": true
+    },
+    {
+      "key": "min_temp_c",
+      "label": "Minimum temp (\u00c2\u00b0C)",
+      "type": "number",
+      "min": -40,
+      "max": 20,
+      "default": 2
+    },
+    {
+      "key": "max_temp_c",
+      "label": "Maximum temp (\u00c2\u00b0C)",
+      "type": "number",
+      "min": -40,
+      "max": 25,
+      "default": 8
+    },
+    {
+      "key": "alert_delay_sec",
+      "label": "Alert delay (sec)",
+      "type": "number",
+      "min": 0,
+      "max": 600,
+      "default": 60
+    },
+    {
+      "key": "auto_notify",
+      "label": "Auto notify on breach",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ds18b20",
+        "temp_humidity",
+        "shock_tilt"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 2
+    }
+  ],
+  "metrics": [
+    {
+      "key": "current_temp_c",
+      "label": "Current temp",
+      "unit": "\u00c2\u00b0C"
+    },
+    {
+      "key": "in_range",
+      "label": "In range",
+      "type": "bool"
+    },
+    {
+      "key": "breach_count",
+      "label": "Breach count",
+      "unit": ""
+    }
+  ]
+}

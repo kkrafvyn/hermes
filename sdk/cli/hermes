@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""HERMES CLI — create, build, deploy, migrate applications."""
+
+import argparse
+import json
+import shutil
+import sys
+import urllib.request
+import urllib.error
+from pathlib import Path
+
+HERMES_ROOT = Path(__file__).resolve().parent.parent.parent
+TEMPLATES = Path(__file__).resolve().parent.parent / "templates"
+EXAMPLES = HERMES_ROOT / "examples"
+API_URL = "http://localhost:8787"
+
+
+def _api_post(path: str, body: dict) -> dict:
+    data = json.dumps(body).encode()
+    req = urllib.request.Request(
+        f"{API_URL}{path}",
+        data=data,
+        headers={"Content-Type": "application/json", "X-Hermes-Token": "hermes-dev"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            return json.loads(resp.read())
+    except urllib.error.URLError as e:
+        print(f"Error: control plane not running ({API_URL})")
+        print(f"  Start: python tools/control-plane/server.py")
+        raise SystemExit(1) from e
+
+
+def cmd_create(args):
+    name = args.name
+    dest = Path(args.output or EXAMPLES / name)
+    if dest.exists():
+        print(f"Error: {dest} already exists")
+        return 1
+    template = TEMPLATES / "app"
+    shutil.copytree(template, dest)
+    manifest = dest / "manifest.json"
+    data = json.loads(manifest.read_text())
+    data["name"] = name
+    manifest.write_text(json.dumps(data, indent=2) + "\n")
+    print(f"Created app '{name}' at {dest}")
+    return 0
+
+
+def cmd_build(args):
+    import subprocess
+    target = getattr(args, "target", "host") or "host"
+    build_py = HERMES_ROOT / "sdk" / "build.py"
+    return subprocess.call([sys.executable, str(build_py), args.path, target])
+
+
+def cmd_deploy(args):
+    import subprocess
+    app_dir = Path(args.path).resolve()
+    subprocess.call([sys.executable, str(HERMES_ROOT / "sdk" / "package.py"), str(app_dir)])
+    manifest_path = app_dir / "binaries" / "manifest.json"
+    if not manifest_path.exists():
+        manifest_path = app_dir / "manifest.json"
+    rel = manifest_path.relative_to(HERMES_ROOT).as_posix()
+    result = _api_post("/api/apps/install", {"manifest_path": rel})
+    if "error" in result:
+        print(f"Deploy failed: {result['error']}")
+        return 1
+    name = result["name"]
+    _api_post(f"/api/apps/{name}/start", {})
+    node = result.get("node_id", "?")
+    print(f"Deployed {name} v{result['version']} to node {node}")
+    print("  install -> verify -> start")
+    return 0
+
+
+def cmd_migrate(args):
+    result = _api_post(f"/api/apps/{args.app}/migrate", {"dst_node": args.dst})
+    if "error" in result:
+        print(f"Migration failed: {result['error']}")
+        return 1
+    for step in result.get("steps", []):
+        print(f"  [{step}] OK")
+    app = result["app"]
+    print(f"Migrated {args.app}: node {args.src} -> {app['node_id']}")
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="hermes", description="HERMES Developer CLI")
+    sub = parser.add_subparsers(dest="command")
+
+    p_create = sub.add_parser("create", help="Create new application from template")
+    p_create.add_argument("name", help="Application name")
+    p_create.add_argument("-o", "--output", help="Output directory")
+
+    p_build = sub.add_parser("build", help="Build application")
+    p_build.add_argument("path", help="Application directory")
+    p_build.add_argument("-t", "--target", default="host",
+                         help="host, emulator, esp8266, esp32s3, esp32c3, stm32h7, stm32f4, nrf52840, all")
+
+    p_deploy = sub.add_parser("deploy", help="Deploy application to cluster")
+    p_deploy.add_argument("path", help="Application directory")
+    p_deploy.add_argument("-n", "--node", help="Target node (0=STM32, 1=ESP32, 2=nRF)")
+
+    p_package = sub.add_parser("package", help="Package application for deploy")
+    p_package.add_argument("path", help="Application directory")
+    p_package.add_argument("-t", "--target", default="host", help="Build target")
+
+    p_migrate = sub.add_parser("migrate", help="Migrate application between nodes")
+    p_migrate.add_argument("app", help="Application name")
+    p_migrate.add_argument("src", type=int, help="Source node ID")
+    p_migrate.add_argument("dst", type=int, help="Destination node ID")
+
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        return 1
+
+    handlers = {
+        "create": cmd_create,
+        "build": cmd_build,
+        "deploy": cmd_deploy,
+        "migrate": cmd_migrate,
+        "package": lambda a: __import__("subprocess").call(
+            [sys.executable, str(HERMES_ROOT / "sdk" / "package.py"), a.path,
+             getattr(a, "target", "host")]),
+    }
+    return handlers[args.command](args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

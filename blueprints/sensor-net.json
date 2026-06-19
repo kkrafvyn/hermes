@@ -1,0 +1,67 @@
+{
+  "id": "sensor-net",
+  "name": "Sensor Network",
+  "description": "Multi-sensor mesh with periodic reporting",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "network_name",
+      "label": "Network name",
+      "type": "text",
+      "default": "Sensor Net 1",
+      "required": true
+    },
+    {
+      "key": "sensor_count",
+      "label": "Number of sensors",
+      "type": "number",
+      "min": 1,
+      "max": 16,
+      "default": 4
+    },
+    {
+      "key": "report_interval_sec",
+      "label": "Report interval (sec)",
+      "type": "number",
+      "min": 5,
+      "max": 3600,
+      "default": 120
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "motion_pir",
+        "ble_rssi",
+        "accelerometer"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 2
+    }
+  ],
+  "metrics": [
+    {
+      "key": "active_sensors",
+      "label": "Active sensors",
+      "unit": ""
+    },
+    {
+      "key": "last_reading",
+      "label": "Last reading",
+      "unit": ""
+    },
+    {
+      "key": "packets_sent",
+      "label": "Packets sent",
+      "unit": ""
+    }
+  ]
+}

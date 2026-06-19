@@ -1,0 +1,21 @@
+{
+  "id": "pool-spa",
+  "name": "Pool & Spa",
+  "description": "pH, ORP, pump and heater control",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    { "key": "pool_name", "label": "Pool name", "type": "text", "default": "Main Pool", "required": true },
+    { "key": "ph_target", "label": "Target pH", "type": "number", "min": 6, "max": 8.5, "default": 7.4 },
+    { "key": "temp_target_c", "label": "Target temp (°C)", "type": "number", "min": 20, "max": 40, "default": 28 },
+    { "key": "auto_dose", "label": "Auto chemical dosing", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["ph", "orp", "water_level", "temp_humidity"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 1 }
+  ],
+  "metrics": [
+    { "key": "ph_level", "label": "pH", "unit": "" },
+    { "key": "water_temp_c", "label": "Water temp", "unit": "°C" },
+    { "key": "pump_on", "label": "Pump on", "type": "bool" }
+  ]
+}

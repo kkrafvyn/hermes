@@ -1,0 +1,65 @@
+{
+  "id": "telemetry",
+  "name": "Telemetry Hub",
+  "description": "Network and cluster telemetry collection",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 3,
+  "fields": [
+    {
+      "key": "hub_name",
+      "label": "Hub name",
+      "type": "text",
+      "default": "Telemetry Hub",
+      "required": true
+    },
+    {
+      "key": "sample_rate_hz",
+      "label": "Sample rate (Hz)",
+      "type": "number",
+      "min": 1,
+      "max": 100,
+      "default": 10
+    },
+    {
+      "key": "alert_on_high_load",
+      "label": "Alert on high load",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "current_clamp",
+        "voltage",
+        "pressure",
+        "modbus_meter"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "bandwidth_kbps",
+      "label": "Bandwidth",
+      "unit": "kbps"
+    },
+    {
+      "key": "packets_sent",
+      "label": "Packets sent",
+      "unit": ""
+    },
+    {
+      "key": "load_percent",
+      "label": "Load",
+      "unit": "%"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HERMES Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>HERMES</h1>
+    <span class="subtitle">Heterogeneous Embedded Runtime</span>
+    <span id="cluster-status" class="badge online">Cluster Online</span>
+  </header>
+
+  <main>
+    <section class="nodes">
+      <h2>Nodes</h2>
+      <div class="grid" id="node-grid"></div>
+    </section>
+
+    <section class="studio">
+      <h2>App Studio</h2>
+      <p class="hint">Create and customize apps from blueprints — no code required.</p>
+      <div class="studio-layout">
+        <div class="blueprint-list" id="blueprint-list"></div>
+        <form class="studio-form" id="studio-form">
+          <h3 id="studio-title">Select a blueprint</h3>
+          <div id="studio-fields"></div>
+          <div class="studio-actions">
+            <button type="button" id="btn-create-app" class="primary" disabled>Create &amp; Deploy</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="apps">
+      <h2>Applications</h2>
+      <table id="app-table">
+        <thead>
+          <tr><th>Name</th><th>Blueprint</th><th>Node</th><th>State</th><th>Metrics</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="app-body"></tbody>
+      </table>
+      <button id="btn-deploy" class="secondary">Deploy from manifest (advanced)</button>
+    </section>
+
+    <section class="metrics">
+      <h2>Cluster Metrics</h2>
+      <div class="metric-cards">
+        <div class="card"><span class="label">Load</span><span id="m-load" class="value">32%</span></div>
+        <div class="card"><span class="label">Power</span><span id="m-power" class="value">1.2 W</span></div>
+        <div class="card"><span class="label">Temp</span><span id="m-temp" class="value">42°C</span></div>
+        <div class="card"><span class="label">Apps</span><span id="m-apps" class="value">3</span></div>
+      </div>
+      <h3>Load history</h3>
+      <div id="analytics-chart" class="analytics-chart"></div>
+    </section>
+
+    <section class="logs">
+      <h2>Logs</h2>
+      <pre id="log-output"></pre>
+    </section>
+  </main>
+
+  <div id="config-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="config-modal-title">Configure App</h3>
+      <form id="config-form"></form>
+      <div class="modal-actions">
+        <button type="button" id="btn-config-cancel" class="secondary">Cancel</button>
+        <button type="button" id="btn-config-save" class="primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

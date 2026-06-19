@@ -1,0 +1,20 @@
+{
+  "id": "solar-battery",
+  "name": "Solar & Battery",
+  "description": "Solar output, battery state, grid import/export",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 4,
+  "fields": [
+    { "key": "site_name", "label": "Site name", "type": "text", "default": "Home Solar", "required": true },
+    { "key": "battery_capacity_kwh", "label": "Battery capacity (kWh)", "type": "number", "min": 1, "max": 100, "default": 10 },
+    { "key": "export_limit_kw", "label": "Export limit (kW)", "type": "number", "min": 0, "max": 50, "default": 5 },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["current_clamp", "light_par", "temp_humidity", "voltage"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 1 }
+  ],
+  "metrics": [
+    { "key": "solar_kw", "label": "Solar output", "unit": "kW" },
+    { "key": "battery_pct", "label": "Battery", "unit": "%" },
+    { "key": "grid_import_kw", "label": "Grid import", "unit": "kW" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "testapp",
+  "version": "0.1.0",
+  "targets": [
+    "stm32",
+    "esp32",
+    "nrf"
+  ],
+  "memory": "64KB",
+  "priority": 5,
+  "description": "HERMES application template"
+}

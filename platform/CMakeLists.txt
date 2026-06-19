@@ -1,0 +1,3 @@
+add_library(hermes_platform STATIC src/hermes_app.c)
+target_include_directories(hermes_platform PUBLIC include)
+target_link_libraries(hermes_platform PUBLIC hermes_runtime)

@@ -1,0 +1,20 @@
+{
+  "id": "machine-monitor",
+  "name": "Machine Monitor",
+  "description": "Vibration, runtime, and predictive maintenance",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 6,
+  "fields": [
+    { "key": "machine_name", "label": "Machine name", "type": "text", "default": "Motor 1", "required": true },
+    { "key": "vibration_alert_g", "label": "Vibration alert (g)", "type": "number", "min": 0.1, "max": 20, "default": 2 },
+    { "key": "runtime_hours", "label": "Service interval (hrs)", "type": "number", "min": 10, "max": 10000, "default": 500 },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["vibration", "accelerometer", "temp_humidity", "current_clamp"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 0 }
+  ],
+  "metrics": [
+    { "key": "vibration_g", "label": "Vibration", "unit": "g" },
+    { "key": "motor_temp_c", "label": "Motor temp", "unit": "°C" },
+    { "key": "service_due", "label": "Service due", "type": "bool" }
+  ]
+}

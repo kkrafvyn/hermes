@@ -1,0 +1,20 @@
+{
+  "id": "smart-gate",
+  "name": "Smart Gate",
+  "description": "Canal/gate level, flow control, and irrigation gates",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    { "key": "gate_name", "label": "Gate name", "type": "text", "default": "Gate 7", "required": true },
+    { "key": "target_flow_lpm", "label": "Target flow (L/min)", "type": "number", "min": 0, "max": 500, "default": 50 },
+    { "key": "auto_level", "label": "Auto level control", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["flow_meter", "water_level", "ultrasonic", "pressure"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 0 }
+  ],
+  "metrics": [
+    { "key": "flow_lpm", "label": "Flow rate", "unit": "L/min" },
+    { "key": "gate_open_pct", "label": "Gate open", "unit": "%" },
+    { "key": "level_cm", "label": "Water level", "unit": "cm" }
+  ]
+}

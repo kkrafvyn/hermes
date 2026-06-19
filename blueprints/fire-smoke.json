@@ -1,0 +1,20 @@
+{
+  "id": "fire-smoke",
+  "name": "Fire & Smoke",
+  "description": "Smoke, heat, CO detection and zone alarms",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 7,
+  "fields": [
+    { "key": "site_name", "label": "Building / zone", "type": "text", "default": "Building A", "required": true },
+    { "key": "zones", "label": "Detection zones", "type": "number", "min": 1, "max": 32, "default": 4 },
+    { "key": "auto_sprinkler", "label": "Auto sprinkler notify", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["smoke", "co_gas", "temp_humidity", "gas_mq"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 1 }
+  ],
+  "metrics": [
+    { "key": "smoke_level", "label": "Smoke level", "unit": "" },
+    { "key": "co_ppm", "label": "CO", "unit": "ppm" },
+    { "key": "alarm_active", "label": "Alarm active", "type": "bool" }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "warehouse",
+  "name": "Warehouse",
+  "description": "Zone monitoring, cold storage, and door alerts",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    {
+      "key": "facility_name",
+      "label": "Facility name",
+      "type": "text",
+      "default": "Warehouse 3",
+      "required": true
+    },
+    {
+      "key": "zones",
+      "label": "Number of zones",
+      "type": "number",
+      "min": 1,
+      "max": 24,
+      "default": 6
+    },
+    {
+      "key": "cold_storage_temp_c",
+      "label": "Cold storage target (\u00c2\u00b0C)",
+      "type": "number",
+      "min": -25,
+      "max": 15,
+      "default": 4
+    },
+    {
+      "key": "alert_on_door_open",
+      "label": "Alert on door open",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ds18b20",
+        "door_contact",
+        "motion_pir",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 0
+    }
+  ],
+  "metrics": [
+    {
+      "key": "zone_temp_c",
+      "label": "Zone temperature",
+      "unit": "\u00c2\u00b0C"
+    },
+    {
+      "key": "doors_open",
+      "label": "Doors open",
+      "unit": ""
+    },
+    {
+      "key": "cold_ok",
+      "label": "Cold storage OK",
+      "type": "bool"
+    }
+  ]
+}

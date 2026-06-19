@@ -1,0 +1,81 @@
+{
+  "id": "aquaponics",
+  "name": "Aquaponics",
+  "description": "Fish tank, pH balance, and automated feeding",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    {
+      "key": "system_name",
+      "label": "System name",
+      "type": "text",
+      "default": "Tank 1",
+      "required": true
+    },
+    {
+      "key": "ph_min",
+      "label": "pH minimum",
+      "type": "number",
+      "min": 4,
+      "max": 9,
+      "default": 6.5
+    },
+    {
+      "key": "ph_max",
+      "label": "pH maximum",
+      "type": "number",
+      "min": 4,
+      "max": 9,
+      "default": 7.5
+    },
+    {
+      "key": "auto_feed",
+      "label": "Auto feed",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "feed_interval_hours",
+      "label": "Feed interval (hours)",
+      "type": "number",
+      "min": 1,
+      "max": 48,
+      "default": 8
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "ph",
+        "orp",
+        "water_level",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 0
+    }
+  ],
+  "metrics": [
+    {
+      "key": "ph_level",
+      "label": "pH level",
+      "unit": ""
+    },
+    {
+      "key": "water_temp_c",
+      "label": "Water temp",
+      "unit": "\u00c2\u00b0C"
+    },
+    {
+      "key": "feeder_active",
+      "label": "Feeder active",
+      "type": "bool"
+    }
+  ]
+}

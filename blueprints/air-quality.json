@@ -1,0 +1,21 @@
+{
+  "id": "air-quality",
+  "name": "Air Quality",
+  "description": "CO₂, VOC, PM2.5 and comfort monitoring",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 5,
+  "fields": [
+    { "key": "site_name", "label": "Room / site", "type": "text", "default": "Office", "required": true },
+    { "key": "co2_alert_ppm", "label": "CO₂ alert (ppm)", "type": "number", "min": 400, "max": 5000, "default": 1200 },
+    { "key": "pm25_alert", "label": "PM2.5 alert (µg/m³)", "type": "number", "min": 0, "max": 500, "default": 35 },
+    { "key": "auto_vent", "label": "Auto ventilate", "type": "toggle", "default": true },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["co2", "voc", "pm25", "temp_humidity"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 1 }
+  ],
+  "metrics": [
+    { "key": "co2_ppm", "label": "CO₂", "unit": "ppm" },
+    { "key": "pm25_ug", "label": "PM2.5", "unit": "µg/m³" },
+    { "key": "vent_on", "label": "Ventilation", "type": "bool" }
+  ]
+}

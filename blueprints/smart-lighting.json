@@ -1,0 +1,78 @@
+{
+  "id": "smart-lighting",
+  "name": "Smart Lighting",
+  "description": "Brightness, schedules, and sunset automation",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "building_name",
+      "label": "Building / area",
+      "type": "text",
+      "default": "Living Room",
+      "required": true
+    },
+    {
+      "key": "default_brightness",
+      "label": "Default brightness (%)",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "default": 75
+    },
+    {
+      "key": "sunset_auto",
+      "label": "Sunset automation",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "schedule_on",
+      "label": "Schedule enabled",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "lights_count",
+      "label": "Number of fixtures",
+      "type": "number",
+      "min": 1,
+      "max": 64,
+      "default": 8
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "lux",
+        "motion_pir",
+        "light_par"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "brightness_pct",
+      "label": "Brightness",
+      "unit": "%"
+    },
+    {
+      "key": "fixtures_on",
+      "label": "Fixtures on",
+      "unit": ""
+    },
+    {
+      "key": "schedule_active",
+      "label": "Schedule active",
+      "type": "bool"
+    }
+  ]
+}

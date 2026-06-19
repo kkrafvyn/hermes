@@ -1,0 +1,79 @@
+{
+  "id": "smarthome",
+  "name": "Smart Home",
+  "description": "Climate control, lighting, and room automation",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    {
+      "key": "home_name",
+      "label": "Home name",
+      "type": "text",
+      "default": "My Home",
+      "required": true
+    },
+    {
+      "key": "target_temp_c",
+      "label": "Target temperature (\u00c2\u00b0C)",
+      "type": "number",
+      "min": 10,
+      "max": 35,
+      "default": 22
+    },
+    {
+      "key": "lights_on",
+      "label": "Lights on by default",
+      "type": "toggle",
+      "default": false
+    },
+    {
+      "key": "auto_climate",
+      "label": "Auto climate control",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "check_interval_sec",
+      "label": "Check interval (sec)",
+      "type": "number",
+      "min": 10,
+      "max": 3600,
+      "default": 60
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "motion_pir",
+        "door_contact",
+        "lux"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "room_temp_c",
+      "label": "Room temperature",
+      "unit": "\u00c2\u00b0C"
+    },
+    {
+      "key": "lights_active",
+      "label": "Lights active",
+      "type": "bool"
+    },
+    {
+      "key": "hvac_on",
+      "label": "HVAC running",
+      "type": "bool"
+    }
+  ]
+}

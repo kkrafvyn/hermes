@@ -1,0 +1,15 @@
+build/
+data/
+manual/
+.vscode/
+.platformio/
+.pip-cache/
+tmp/
+.pio/
+*.o
+*.a
+*.exe
+__pycache__/
+*.pyc
+.DS_Store
+.env

@@ -1,0 +1,79 @@
+{
+  "id": "security",
+  "name": "Security Monitor",
+  "description": "Motion detection, entry points, and alarm control",
+  "version": "1.0.0",
+  "memory": "80KB",
+  "priority": 6,
+  "fields": [
+    {
+      "key": "site_name",
+      "label": "Site name",
+      "type": "text",
+      "default": "Main Building",
+      "required": true
+    },
+    {
+      "key": "entry_points",
+      "label": "Entry points",
+      "type": "number",
+      "min": 1,
+      "max": 32,
+      "default": 4
+    },
+    {
+      "key": "motion_sensitivity",
+      "label": "Motion sensitivity (%)",
+      "type": "number",
+      "min": 1,
+      "max": 100,
+      "default": 70
+    },
+    {
+      "key": "alarm_enabled",
+      "label": "Alarm armed",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "night_mode",
+      "label": "Night mode (stricter)",
+      "type": "toggle",
+      "default": false
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "motion_pir",
+        "door_contact",
+        "smoke",
+        "co_gas"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 0
+    }
+  ],
+  "metrics": [
+    {
+      "key": "motion_events",
+      "label": "Motion events",
+      "unit": ""
+    },
+    {
+      "key": "doors_open",
+      "label": "Doors open",
+      "unit": ""
+    },
+    {
+      "key": "alarm_active",
+      "label": "Alarm active",
+      "type": "bool"
+    }
+  ]
+}

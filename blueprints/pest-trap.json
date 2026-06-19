@@ -1,0 +1,20 @@
+{
+  "id": "pest-trap",
+  "name": "Pest Trap Monitor",
+  "description": "Field trap counts and bait status",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    { "key": "trap_name", "label": "Trap zone name", "type": "text", "default": "Field Block 3", "required": true },
+    { "key": "trap_count", "label": "Number of traps", "type": "number", "min": 1, "max": 64, "default": 12 },
+    { "key": "alert_threshold", "label": "Catch alert threshold", "type": "number", "min": 1, "max": 100, "default": 10 },
+    { "key": "sensors", "label": "Sensors", "type": "sensor_list", "default": ["motion_pir", "light_level", "temp_humidity"] },
+    { "key": "target_node", "label": "Target node", "type": "node", "default": 2 }
+  ],
+  "metrics": [
+    { "key": "catches_today", "label": "Catches today", "unit": "" },
+    { "key": "traps_active", "label": "Traps active", "unit": "" },
+    { "key": "bait_low", "label": "Bait low", "type": "bool" }
+  ]
+}

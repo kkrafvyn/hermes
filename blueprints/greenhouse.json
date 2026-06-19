@@ -1,0 +1,81 @@
+{
+  "id": "greenhouse",
+  "name": "Greenhouse",
+  "description": "Climate, humidity, and ventilation for greenhouse zones",
+  "version": "1.0.0",
+  "memory": "96KB",
+  "priority": 5,
+  "fields": [
+    {
+      "key": "greenhouse_name",
+      "label": "Greenhouse name",
+      "type": "text",
+      "default": "Greenhouse A",
+      "required": true
+    },
+    {
+      "key": "target_temp_c",
+      "label": "Target temperature (\u00c2\u00b0C)",
+      "type": "number",
+      "min": 10,
+      "max": 40,
+      "default": 24
+    },
+    {
+      "key": "target_humidity",
+      "label": "Target humidity (%)",
+      "type": "number",
+      "min": 30,
+      "max": 95,
+      "default": 65
+    },
+    {
+      "key": "auto_vent",
+      "label": "Auto ventilation",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "check_interval_sec",
+      "label": "Check interval (sec)",
+      "type": "number",
+      "min": 10,
+      "max": 3600,
+      "default": 120
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "co2",
+        "light_par",
+        "lux"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "air_temp_c",
+      "label": "Air temperature",
+      "unit": "\u00c2\u00b0C"
+    },
+    {
+      "key": "humidity_pct",
+      "label": "Humidity",
+      "unit": "%"
+    },
+    {
+      "key": "vents_open",
+      "label": "Vents open",
+      "type": "bool"
+    }
+  ]
+}

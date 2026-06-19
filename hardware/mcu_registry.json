@@ -1,0 +1,206 @@
+{
+  "version": "2.0.0",
+  "sensor_mcu_ids": "__all__",
+  "workarounds": {
+    "esp32c6": {
+      "use_target": "esp32c3",
+      "env": "esp32c3",
+      "kind": "flash_alias",
+      "summary": "Flash esp32c3 firmware - same HERMES JSON serial protocol on ESP32-C6 boards"
+    },
+    "esp32p4": {
+      "use_target": "esp32s3",
+      "env": "esp32s3",
+      "path": "hardware/esp32s3-pio",
+      "kind": "flash_alias",
+      "summary": "Flash esp32s3 build until espressif32 adds P4 Arduino support"
+    },
+    "rtl8720": {
+      "use_target": "rtl8710",
+      "env": "rtl8710",
+      "kind": "flash_alias",
+      "summary": "RTL8720 (AmebaZ2): use rtl8710 LibreTiny build - same Tuya/WBR module family"
+    },
+    "lpc1768": {
+      "use_target": "stm32f4",
+      "env": "stm32f4",
+      "kind": "flash_alias",
+      "summary": "LPC1768 has no Arduino PIO - use stm32f4 node firmware on ARM Cortex-M boards"
+    },
+    "nrf5340": {
+      "use_target": "nrf52840",
+      "env": "nrf52840",
+      "path": "hardware/nrf52840-pio",
+      "kind": "flash_alias",
+      "summary": "nRF5340 needs Zephyr SDK - nrf52840 build covers Nordic BLE node apps"
+    },
+    "nrf53": {
+      "use_target": "nrf52840",
+      "env": "nrf52840",
+      "path": "hardware/nrf52840-pio",
+      "kind": "flash_alias",
+      "summary": "Same as nrf5340 - use nrf52840 firmware"
+    },
+    "nrf51": {
+      "use_target": "nrf52832",
+      "env": "nrf52832",
+      "kind": "flash_alias",
+      "summary": "Legacy nRF51 - flash nrf52832 HERMES node"
+    },
+    "efr32": {
+      "use_target": "nrf52840",
+      "env": "nrf52840",
+      "path": "hardware/nrf52840-pio",
+      "kind": "runtime_alias",
+      "summary": "Silabs PIO unavailable on Windows - use nrf52840 for Zigbee gateway host; EFR32 as UART coprocessor (see stubs/efr32)"
+    },
+    "kinetis": {
+      "use_target": "imxrt",
+      "env": "imxrt",
+      "kind": "flash_alias",
+      "summary": "Kinetis: use Teensy 4.x / imxrt build"
+    },
+    "rx": {
+      "use_target": "ra",
+      "env": "renesas_ra",
+      "kind": "flash_alias",
+      "summary": "Renesas RX - use RA (UNO R4) build"
+    },
+    "pic16": {
+      "use_target": "pic32",
+      "env": "pic32",
+      "kind": "stub_port",
+      "summary": "Port hardware/stubs/generic_node.c to MPLAB X; reference pic32 PIO build"
+    },
+    "pic18": {
+      "use_target": "pic32",
+      "env": "pic32",
+      "kind": "stub_port",
+      "summary": "Same as pic16 - generic_node.c template"
+    },
+    "stm8": {
+      "use_target": "stm32f1",
+      "env": "stm32f1",
+      "kind": "stub_port",
+      "summary": "STM8: port generic_node.c via STVD; stm32f1 for similar 8-bit UART nodes"
+    },
+    "xr809": {
+      "use_target": "rtl8710",
+      "env": "rtl8710",
+      "kind": "flash_alias",
+      "summary": "XR809 WiFi - use rtl8710 LibreTiny build"
+    },
+    "cc2530": {
+      "kind": "coprocessor",
+      "summary": "Zigbee coordinator dongle - flash Z-Stack, link via serial-bridge (not HERMES node FW)"
+    },
+    "cc2531": {
+      "kind": "coprocessor",
+      "summary": "USB Zigbee coordinator - Z-Stack + serial-bridge"
+    },
+    "cc2652": {
+      "kind": "coprocessor",
+      "summary": "TI Z-Stack 3 coordinator - UART to control plane"
+    },
+    "cc26xx": {
+      "kind": "coprocessor",
+      "summary": "TI SimpleLink coprocessor - see hardware/stubs/ti_cc"
+    },
+    "efr32mg12": {
+      "kind": "coprocessor",
+      "summary": "Silicon Labs Zigbee NCP - Spinel/UART to cluster"
+    },
+    "efr32mg21": {
+      "kind": "coprocessor",
+      "summary": "EFR32 MG21 Zigbee coprocessor"
+    },
+    "stm32h5": {
+      "use_target": "stm32h7",
+      "env": "stm32h7",
+      "path": "hardware/stm32h7-pio",
+      "kind": "flash_alias",
+      "summary": "STM32H5 - use stm32h7 build until nucleo_h563 env is verified"
+    },
+    "stm32l4": {
+      "use_target": "stm32f4",
+      "env": "stm32f4",
+      "kind": "flash_alias",
+      "summary": "STM32L4 - use stm32f4 build (same HERMES STM32 node)"
+    },
+    "stm32u5": {
+      "use_target": "stm32h7",
+      "env": "stm32h7",
+      "path": "hardware/stm32h7-pio",
+      "kind": "flash_alias",
+      "summary": "STM32U5 ultra-low-power - use stm32h7 build for bring-up"
+    },
+    "stm32wb": {
+      "use_target": "stm32f4",
+      "env": "stm32f4",
+      "kind": "flash_alias",
+      "summary": "STM32WB BLE - use stm32f4 node; add BLE coprocessor separately"
+    }
+  },
+  "targets": {
+    "esp8266": {"name": "ESP8266 / ESP-12E", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware/esp8266", "env": "esp8266", "boards": ["esp12e", "ESP-12E/F"]},
+    "esp8285": {"name": "ESP8285", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp8285", "boards": ["ESP8285"]},
+    "esp01": {"name": "ESP-01", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp01", "boards": ["ESP-01", "esp01_1m"]},
+    "esp07": {"name": "ESP-07", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp07", "boards": ["ESP-07"]},
+    "esp12e": {"name": "ESP-12E", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware/esp8266", "env": "esp8266", "boards": ["ESP-12E"]},
+    "d1_mini": {"name": "Wemos D1 Mini", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "d1_mini", "boards": ["Wemos D1 Mini"]},
+    "nodemcu": {"name": "NodeMCU", "family": "espressif8266", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "nodemcu", "boards": ["NodeMCU", "LOLIN"]},
+    "esp32": {"name": "ESP32-WROOM-32", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32", "boards": ["ESP32-WROOM-32", "Sonoff", "Shelly"]},
+    "esp32_wrover": {"name": "ESP32-WROVER", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32_wrover", "boards": ["ESP32-WROVER", "PSRAM"]},
+    "esp32s2": {"name": "ESP32-S2", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32s2", "boards": ["ESP32-S2"]},
+    "esp32s3": {"name": "ESP32-S3-WROOM", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware/esp32s3-pio", "env": "esp32s3", "boards": ["ESP32-S3-WROOM", "Camera"]},
+    "esp32c3": {"name": "ESP32-C3-MINI", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32c3", "boards": ["ESP32-C3-MINI", "Gosund", "Tuya"]},
+    "esp32c6": {"name": "ESP32-C6-WROOM", "family": "espressif32", "tier": "alias", "tool": "alias", "path": "hardware/stubs/esp32c6", "env": null, "boards": ["ESP32-C6-WROOM"], "notes": "Production: flash esp32c3 build — same HERMES JSON serial protocol"},
+    "esp32p4": {"name": "ESP32-P4", "family": "espressif32", "tier": "alias", "tool": "alias", "path": "hardware/stubs/esp32p4", "env": null, "boards": ["ESP32-P4"], "notes": "Production: flash esp32s3 build until P4 Arduino support ships"},
+    "esp32s3_psram": {"name": "ESP32-S3 + PSRAM", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32s3_psram", "boards": ["ESP32-S3 with PSRAM"]},
+    "esp32_cam": {"name": "ESP32-CAM", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32_cam", "boards": ["AI-Thinker ESP32-CAM"]},
+    "esp32_eth": {"name": "ESP32 Ethernet", "family": "espressif32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "esp32_eth", "boards": ["WT32-ETH01", "ESP32-PoE"]},
+    "stm32h7": {"name": "STM32H7", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware/stm32h7-pio", "env": "stm32h7", "boards": ["Nucleo-H743"]},
+    "stm32f4": {"name": "STM32F4", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32f4", "boards": ["Nucleo-F446"]},
+    "stm32f1": {"name": "STM32F1", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32f1", "boards": ["Blue Pill", "Nucleo-F103"]},
+    "stm32f0": {"name": "STM32F0", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32f0", "boards": ["Nucleo-F030"]},
+    "stm32l4": {"name": "STM32L4", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32l4", "boards": ["Nucleo-L432"]},
+    "stm32g0": {"name": "STM32G0", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32g0", "boards": ["Nucleo-G071"]},
+    "stm32wb": {"name": "STM32WB (BLE)", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32wb", "boards": ["P-NUCLEO-WB55"]},
+    "stm32f7": {"name": "STM32F7", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32f7", "boards": ["Nucleo-F746"]},
+    "stm32h5": {"name": "STM32H5", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32h5", "boards": ["Nucleo-H563"]},
+    "stm32u5": {"name": "STM32U5", "family": "stm32", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "stm32u5", "boards": ["Nucleo-U575"]},
+    "stm8": {"name": "STM8", "family": "stm8", "tier": "port", "tool": "port", "path": "hardware/stubs/stm8", "env": null, "boards": ["STM8S"], "notes": "Production: port hardware/stubs/generic_node.c via STVD/STM8Cube"},
+    "rp2040": {"name": "RP2040", "family": "rp2040", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "rp2040", "boards": ["Raspberry Pi Pico", "Pico W"]},
+    "nrf52832": {"name": "nRF52832", "family": "nordic", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "nrf52832", "boards": ["nRF52832 DK"]},
+    "nrf52840": {"name": "nRF52840", "family": "nordic", "tier": "supported", "tool": "platformio", "path": "hardware/nrf52840-pio", "env": "nrf52840", "boards": ["Adafruit Feather nRF52840"]},
+    "nrf5340": {"name": "nRF5340", "family": "nordic", "tier": "alias", "tool": "alias", "path": "hardware/stubs/nrf5340", "env": null, "boards": ["nRF5340 DK"], "notes": "Production: flash nrf52840 build for Nordic BLE node apps"},
+    "nrf51": {"name": "nRF51", "family": "nordic", "tier": "alias", "tool": "alias", "path": "hardware/stubs/nrf51", "env": null, "boards": ["nRF51822"], "notes": "Production: flash nrf52832 HERMES node firmware"},
+    "nrf53": {"name": "nRF53 series", "family": "nordic", "tier": "alias", "tool": "alias", "path": "hardware/stubs/nrf5340", "env": null, "boards": ["nRF5340"], "notes": "Production: flash nrf52840 build"},
+    "atmega328p": {"name": "ATmega328P", "family": "avr", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "atmega328p", "boards": ["Arduino Uno", "Nano"]},
+    "atmega2560": {"name": "ATmega2560", "family": "avr", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "atmega2560", "boards": ["Arduino Mega"]},
+    "avr": {"name": "AVR (generic)", "family": "avr", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "atmega328p", "boards": ["AVR"]},
+    "samd21": {"name": "SAMD21", "family": "samd", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "samd21", "boards": ["Arduino Zero", "Feather M0"]},
+    "samd51": {"name": "SAMD51", "family": "samd", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "samd51", "boards": ["Feather M4", "Metro M4"]},
+    "msp430": {"name": "MSP430", "family": "msp430", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "msp430", "boards": ["MSP-EXP430G2553"]},
+    "efr32mg12": {"name": "EFR32MG12", "family": "efr32", "tier": "coprocessor", "tool": "stub", "path": "hardware/stubs/efr32", "env": null, "boards": ["EFR32MG12"], "notes": "Zigbee coprocessor — HERMES cluster link"},
+    "efr32mg21": {"name": "EFR32MG21", "family": "efr32", "tier": "coprocessor", "tool": "stub", "path": "hardware/stubs/efr32", "env": null, "boards": ["EFR32MG21"], "notes": "Zigbee coprocessor"},
+    "efr32": {"name": "EFR32 (generic)", "family": "efr32", "tier": "alias", "tool": "alias", "path": "hardware/stubs/efr32", "env": null, "boards": ["EFR32 Mighty Gecko"], "notes": "Production: nrf52840 gateway host + EFR32 UART coprocessor on Windows"},
+    "cc2530": {"name": "CC2530", "family": "ti", "tier": "coprocessor", "tool": "stub", "path": "hardware/stubs/ti_cc", "env": null, "boards": ["CC2530"], "notes": "Zigbee coordinator firmware"},
+    "cc2531": {"name": "CC2531", "family": "ti", "tier": "coprocessor", "tool": "stub", "path": "hardware/stubs/ti_cc", "env": null, "boards": ["CC2531 USB dongle"]},
+    "cc2652": {"name": "CC2652", "family": "ti", "tier": "coprocessor", "tool": "coprocessor", "path": "hardware/stubs/ti_cc", "env": null, "boards": ["CC2652P", "CC2652R"], "notes": "Z-Stack 3 coordinator — UART to control plane"},
+    "cc26xx": {"name": "TI CC26xx/CC13xx", "family": "ti", "tier": "coprocessor", "tool": "coprocessor", "path": "hardware/stubs/ti_cc", "env": null, "boards": ["CC13xx", "CC26xx"], "notes": "TI SimpleLink coprocessor — cluster link"},
+    "bk7231t": {"name": "Beken BK7231T", "family": "beken", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "bk7231t", "boards": ["Tuya CB2S", "BlitzWolf"], "notes": "LibreTiny platform"},
+    "bk7231n": {"name": "Beken BK7231N", "family": "beken", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "bk7231n", "boards": ["Tuya"], "notes": "LibreTiny platform"},
+    "rtl8710": {"name": "Realtek RTL8710", "family": "realtek", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "rtl8710", "boards": ["RTL8710BN"], "notes": "LibreTiny platform"},
+    "rtl8720": {"name": "Realtek RTL8720", "family": "realtek", "tier": "alias", "tool": "alias", "path": "hardware/stubs/rtl8720", "env": null, "boards": ["RTL8720CF"], "notes": "Production: flash rtl8710 LibreTiny build (same Tuya/WBR module family)"},
+    "xr809": {"name": "XR809", "family": "realtek", "tier": "alias", "tool": "alias", "path": "hardware/stubs/xr809", "env": null, "boards": ["XR809"], "notes": "Production: flash rtl8710 LibreTiny build"},
+    "lpc1768": {"name": "LPC1768", "family": "nxp", "tier": "alias", "tool": "alias", "path": "hardware/stubs/nxp", "env": null, "boards": ["mbed LPC1768"], "notes": "Production: flash stm32f4 node firmware on ARM Cortex-M boards"},
+    "kinetis": {"name": "Kinetis", "family": "nxp", "tier": "alias", "tool": "alias", "path": "hardware/stubs/nxp", "env": null, "boards": ["Kinetis K-series"], "notes": "Production: flash imxrt (Teensy 4.x) build"},
+    "imxrt": {"name": "i.MX RT", "family": "nxp", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "imxrt", "boards": ["Teensy 4.x", "MIMXRT1060"]},
+    "ra": {"name": "Renesas RA", "family": "renesas", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "renesas_ra", "boards": ["EK-RA6M3", "RA4M1"]},
+    "rx": {"name": "Renesas RX", "family": "renesas", "tier": "alias", "tool": "alias", "path": "hardware/stubs/renesas", "env": null, "boards": ["RX65N"], "notes": "Production: flash renesas_ra (UNO R4) build"},
+    "pic16": {"name": "PIC16", "family": "pic", "tier": "port", "tool": "port", "path": "hardware/stubs/pic", "env": null, "boards": ["PIC16F"], "notes": "Production: port generic_node.c to MPLAB X; reference pic32 PIO build"},
+    "pic18": {"name": "PIC18", "family": "pic", "tier": "port", "tool": "port", "path": "hardware/stubs/pic", "env": null, "boards": ["PIC18F"], "notes": "Production: port generic_node.c to MPLAB X"},
+    "pic32": {"name": "PIC32", "family": "pic", "tier": "supported", "tool": "platformio", "path": "hardware", "env": "pic32", "boards": ["PIC32MX", "Curiosity"]}
+  }
+}

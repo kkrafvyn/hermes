@@ -1,0 +1,75 @@
+{
+  "id": "weather-station",
+  "name": "Weather Station",
+  "description": "Outdoor temperature, humidity, wind, and rainfall",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 3,
+  "fields": [
+    {
+      "key": "station_name",
+      "label": "Station name",
+      "type": "text",
+      "default": "Roof Station",
+      "required": true
+    },
+    {
+      "key": "wind_alert_kmh",
+      "label": "Wind alert (km/h)",
+      "type": "number",
+      "min": 10,
+      "max": 200,
+      "default": 60
+    },
+    {
+      "key": "rain_alert_mm",
+      "label": "Rain alert (mm/hr)",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "default": 10
+    },
+    {
+      "key": "report_interval_sec",
+      "label": "Report interval (sec)",
+      "type": "number",
+      "min": 30,
+      "max": 3600,
+      "default": 300
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "temp_humidity",
+        "wind_speed",
+        "rain_gauge",
+        "pressure"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 2
+    }
+  ],
+  "metrics": [
+    {
+      "key": "outdoor_temp_c",
+      "label": "Outdoor temp",
+      "unit": "\u00c2\u00b0C"
+    },
+    {
+      "key": "wind_kmh",
+      "label": "Wind speed",
+      "unit": "km/h"
+    },
+    {
+      "key": "rain_mm_hr",
+      "label": "Rainfall",
+      "unit": "mm/hr"
+    }
+  ]
+}

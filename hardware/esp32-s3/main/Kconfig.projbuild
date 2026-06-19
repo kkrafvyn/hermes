@@ -1,0 +1,32 @@
+menu "HERMES Gateway"
+
+config HERMES_WIFI_SSID
+    string "WiFi SSID"
+    default "hermes-net"
+
+config HERMES_WIFI_PASSWORD
+    string "WiFi Password"
+    default ""
+
+config HERMES_API_URL
+    string "Control plane URL"
+    default "http://192.168.1.100:8787"
+    help
+        URL of the HERMES control plane (python run.py on your PC).
+        Use your PC's LAN IP, not localhost.
+
+config HERMES_NODE_ID
+    int "Node ID"
+    range 0 7
+    default 1
+    help
+        0=STM32, 1=ESP32 (gateway), 2=nRF
+
+config HERMES_USE_SERIAL_BRIDGE
+    bool "Emit JSON telemetry on UART (serial bridge mode)"
+    default y
+    help
+        When enabled, gateway prints heartbeat JSON on UART for
+        tools/serial-bridge/ instead of HTTP.
+
+endmenu

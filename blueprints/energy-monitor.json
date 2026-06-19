@@ -1,0 +1,72 @@
+{
+  "id": "energy-monitor",
+  "name": "Energy Monitor",
+  "description": "Power usage tracking, peak alerts, and load shedding",
+  "version": "1.0.0",
+  "memory": "64KB",
+  "priority": 4,
+  "fields": [
+    {
+      "key": "site_name",
+      "label": "Site name",
+      "type": "text",
+      "default": "Facility Power",
+      "required": true
+    },
+    {
+      "key": "power_alert_kw",
+      "label": "Power alert threshold (kW)",
+      "type": "number",
+      "min": 0.1,
+      "max": 500,
+      "default": 5
+    },
+    {
+      "key": "peak_shaving",
+      "label": "Peak shaving enabled",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "sample_interval_sec",
+      "label": "Sample interval (sec)",
+      "type": "number",
+      "min": 5,
+      "max": 3600,
+      "default": 30
+    },
+    {
+      "key": "sensors",
+      "label": "Sensors",
+      "type": "sensor_list",
+      "default": [
+        "current_clamp",
+        "voltage",
+        "temp_humidity"
+      ]
+    },
+    {
+      "key": "target_node",
+      "label": "Target node",
+      "type": "node",
+      "default": 1
+    }
+  ],
+  "metrics": [
+    {
+      "key": "power_kw",
+      "label": "Current power",
+      "unit": "kW"
+    },
+    {
+      "key": "daily_kwh",
+      "label": "Daily usage",
+      "unit": "kWh"
+    },
+    {
+      "key": "alert_active",
+      "label": "Alert active",
+      "type": "bool"
+    }
+  ]
+}

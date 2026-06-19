@@ -1,0 +1,16 @@
+{
+  "name": "smartfarm",
+  "version": "1.0.0",
+  "targets": [
+    "stm32",
+    "esp32"
+  ],
+  "memory": "128KB",
+  "priority": 5,
+  "description": "Soil moisture, irrigation control, telemetry",
+  "sha256": "4d5a1a3e473b8d895b25291a32ff734560f5e67feeb36d343e5cde07df4d63bf",
+  "binary_sha256": "e1242fd1439a4271235f8593109ebd2d3752a6cb1be2e029d04c12426a411ccd",
+  "binary_size": 128,
+  "binary_path": "binaries/smartfarm.bin",
+  "signature": "4a1bff709968d8f3fc104fa580e8a586f0ea6d2983c2493552541ecd1c076e24"
+}

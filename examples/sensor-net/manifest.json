@@ -1,0 +1,8 @@
+{
+  "name": "sensor-net",
+  "version": "0.1.0",
+  "targets": ["nrf"],
+  "memory": "32KB",
+  "priority": 3,
+  "description": "BLE sensor network coordinator"
+}

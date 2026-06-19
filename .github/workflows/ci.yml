@@ -1,0 +1,67 @@
+name: HERMES CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      HERMES_TOKEN: hermes-dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Full validation
+        run: python scripts/validate.py
+
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc
+
+      - name: C build (manual)
+        run: |
+          INC="-Ihardware/cluster/include -Idevice-os/include -Iruntime/include -Iplatform/include -Isecurity/include -Ihardware/common"
+          mkdir -p build/manual data/flash data/checkpoints
+          SOURCES="
+            hardware/cluster/src/hermes_link.c
+            hardware/cluster/src/hermes_power.c
+            hardware/cluster/src/hermes_cluster_mgr.c
+            hardware/cluster/src/hermes_router.c
+            hardware/cluster/src/hermes_transport_host.c
+            hardware/cluster/src/hermes_transport_ble.c
+            hardware/common/hermes_node_port.c
+            device-os/src/hermes_task.c
+            device-os/src/hermes_memory.c
+            device-os/src/hermes_ipc.c
+            device-os/src/hermes_freertos.c
+            runtime/src/hermes_runtime.c
+            runtime/src/hermes_monitor.c
+            runtime/src/hermes_scheduler.c
+            runtime/src/hermes_checkpoint.c
+            runtime/src/hermes_checkpoint_io.c
+            runtime/src/hermes_node_runtime.c
+            runtime/src/hermes_quota.c
+            runtime/src/hermes_migration.c
+            runtime/src/hermes_ota.c
+            platform/src/hermes_app.c
+            security/src/hermes_identity.c
+            security/src/hermes_policy.c
+            security/src/hermes_sha256.c
+            security/src/hermes_hmac.c
+          "
+          for f in $SOURCES; do
+            gcc -std=c11 -Wall $INC -c $f -o build/manual/$(basename $f .c).o
+          done
+          gcc -std=c11 -Wall $INC -o build/manual/cluster-sim build/manual/*.o tools/cluster-sim/main.c
+          gcc -std=c11 -Wall $INC -o build/manual/test_platform build/manual/*.o tests/test_platform.c
+          ./build/manual/cluster-sim
+          ./build/manual/test_platform
+
+      - name: SDK package
+        run: python sdk/package.py examples/smartfarm host
