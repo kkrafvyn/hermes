@@ -7,6 +7,7 @@ const HERMES_THEMES = [
   { id: 'slate', label: 'Slate' },
   { id: 'light', label: 'Light' },
   { id: 'contrast', label: 'High contrast' },
+  { id: 'oled', label: 'OLED black' },
 ];
 
 function getHermesTheme() {

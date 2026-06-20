@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>HERMES</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#007aff">
+  <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="themes.css">
   <link rel="stylesheet" href="style.css">
   <script>
@@ -23,16 +26,16 @@
       </div>
       <nav class="nav" aria-label="Main">
         <button type="button" class="nav-item active" data-view="board">
-          <span class="nav-icon">◉</span> Board
+          <span class="nav-icon" data-icon="navBoard"></span> Board
         </button>
         <button type="button" class="nav-item" data-view="studio">
-          <span class="nav-icon">✦</span> App Studio
+          <span class="nav-icon" data-icon="navStudio"></span> App Studio
         </button>
         <button type="button" class="nav-item" data-view="apps">
-          <span class="nav-icon">▣</span> Applications
+          <span class="nav-icon" data-icon="navApps"></span> Applications
         </button>
         <button type="button" class="nav-item" data-view="insights">
-          <span class="nav-icon">◧</span> Insights
+          <span class="nav-icon" data-icon="navInsights"></span> Insights
         </button>
       </nav>
       <div class="sidebar-foot">
@@ -56,6 +59,9 @@
             <p class="eyebrow">Connected board</p>
             <h2 id="board-name">—</h2>
             <p class="board-meta"><span id="board-type">—</span> · <span id="board-status" class="status-chip">—</span></p>
+            <div class="board-hero-actions">
+              <a id="board-open-link" class="btn btn-secondary btn-sm hidden" href="#" target="_blank" rel="noopener">Open board UI</a>
+            </div>
           </div>
           <div class="board-stats">
             <div class="metric-tile"><span class="label">CPU</span><span id="board-cpu" class="value">—</span></div>
@@ -65,10 +71,13 @@
           </div>
         </div>
 
-        <p id="no-board-hint" class="empty-state">
-          No board connected yet. Flash firmware, start the control plane, then run the serial bridge:
-          <code>python scripts/flash_mcu.py esp8266 --port COM4 --bridge</code>
-        </p>
+        <div id="no-board-hint" class="empty-state">
+          <div class="setup-steps">
+            <div class="setup-step"><span class="step-num">1</span><div><strong>Flash firmware</strong><p>Build and upload to your ESP8266</p></div></div>
+            <div class="setup-step"><span class="step-num">2</span><div><strong>Start control plane</strong><p><code>python run.py</code></p></div></div>
+            <div class="setup-step"><span class="step-num">3</span><div><strong>Connect serial bridge</strong><p><code>python scripts/flash_mcu.py esp8266 --port COM4 --bridge</code></p></div></div>
+          </div>
+        </div>
 
         <div id="node-grid-section">
           <div class="node-grid" id="node-grid"></div>
@@ -82,13 +91,22 @@
           <p class="view-lead">Choose a blueprint, customize every field, then deploy.</p>
         </header>
         <div class="studio-shell">
-          <aside class="blueprint-rail" id="blueprint-list" aria-label="Blueprints"></aside>
+          <aside class="blueprint-rail-wrap">
+            <div class="blueprint-rail-head">
+              <input type="search" id="blueprint-search" class="blueprint-search" placeholder="Search apps…" aria-label="Search blueprints">
+              <div class="category-chips" id="category-chips" role="tablist" aria-label="App categories"></div>
+              <p id="blueprint-count" class="blueprint-count">Loading…</p>
+            </div>
+            <div id="favorites-rail" class="favorites-rail hidden"></div>
+            <aside class="blueprint-rail" id="blueprint-list" aria-label="Blueprints"></aside>
+          </aside>
           <div class="studio-sheet">
             <div class="studio-sheet-head">
               <h2 id="studio-title">Select a blueprint</h2>
               <p id="studio-hint" class="view-lead">Pick a template on the left to begin.</p>
             </div>
             <div id="studio-metrics" class="studio-metrics hidden"></div>
+            <div id="studio-preview" class="studio-preview hidden" aria-live="polite"></div>
             <form class="studio-form" id="studio-form" onsubmit="return false">
               <div id="studio-fields" class="field-stack"></div>
               <div class="studio-actions">
@@ -122,6 +140,10 @@
           <div class="metric-tile large"><span class="label">Apps</span><span id="m-apps" class="value">0</span></div>
         </div>
         <div class="group-card">
+          <h3 class="group-title">Alerts</h3>
+          <div id="alerts-panel" class="alerts-panel hint">No active alerts</div>
+        </div>
+        <div class="group-card">
           <h3 class="group-title">Load history</h3>
           <div id="analytics-chart" class="analytics-chart"></div>
         </div>
@@ -146,6 +168,31 @@
     </div>
   </div>
 
+  <div id="deploy-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <h3>Confirm deploy</h3>
+      <div id="deploy-summary" class="deploy-summary"></div>
+      <div class="modal-actions">
+        <button type="button" id="btn-deploy-cancel" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="btn-deploy-confirm" class="btn btn-primary">Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
+    <button type="button" class="nav-item active" data-view="board"><span>Board</span></button>
+    <button type="button" class="nav-item" data-view="studio"><span>Studio</span></button>
+    <button type="button" class="nav-item" data-view="apps"><span>Apps</span></button>
+    <button type="button" class="nav-item" data-view="insights"><span>Insights</span></button>
+  </nav>
+
+  <script src="icons.js"></script>
+  <script src="studio-catalog.js"></script>
   <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
 </body>
 </html>

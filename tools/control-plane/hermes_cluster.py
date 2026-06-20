@@ -393,6 +393,15 @@ class ClusterManager:
             record(status["metrics"])
         except Exception:
             pass
+        try:
+            from rules import evaluate_rules  # noqa: E402
+            metrics = dict(status["metrics"])
+            for app in apps:
+                if app.get("metrics"):
+                    metrics.update(app["metrics"])
+            status["alerts"] = evaluate_rules(metrics)
+        except Exception:
+            status["alerts"] = []
         return status
 
     def get_blueprints(self) -> list[dict]:

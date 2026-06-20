@@ -140,6 +140,22 @@ class Handler(BaseHTTPRequestHandler):
 
             return self._serve_file(DASHBOARD_DIR / "app.js", "application/javascript")
 
+        if path == "/studio-catalog.js":
+
+            return self._serve_file(DASHBOARD_DIR / "studio-catalog.js", "application/javascript")
+
+        if path == "/tokens.css":
+
+            return self._serve_file(DASHBOARD_DIR / "tokens.css", "text/css")
+
+        if path == "/manifest.webmanifest":
+
+            return self._serve_file(DASHBOARD_DIR / "manifest.webmanifest", "application/manifest+json")
+
+        if path == "/sw.js":
+
+            return self._serve_file(DASHBOARD_DIR / "sw.js", "application/javascript")
+
 
 
         if not self._authorized():
@@ -177,6 +193,12 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/analytics":
 
             return self._json(200, analytics_query())
+
+        if path == "/api/rules":
+
+            from rules import load_rules  # noqa: E402
+
+            return self._json(200, {"rules": load_rules()})
 
         if path == "/api/mcus":
 
@@ -326,6 +348,15 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/link/send":
 
             return self._json(200, cluster.link_send(body.get("frame", body)))
+
+
+
+        if path == "/api/rules":
+
+            from rules import save_rules  # noqa: E402
+
+            rules = body.get("rules", [])
+            return self._json(200, {"rules": save_rules(rules)})
 
 
 

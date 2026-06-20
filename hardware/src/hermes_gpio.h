@@ -66,6 +66,8 @@ int hermes_gpio_apply(const hermes_board_gpio_t *cfg);
 void hermes_gpio_loop(void);
 int hermes_gpio_find(uint8_t fn, uint8_t idx);
 int hermes_gpio_set_relay(uint8_t idx, bool on);
+bool hermes_gpio_relay_on(uint8_t idx);
+void hermes_gpio_relays_json(char *buf, size_t max);
 void hermes_gpio_states_json(char *buf, size_t max);
 int hermes_gpio_import_tasmota(const char *json, hermes_board_gpio_t *out);
 void hermes_gpio_to_json(const hermes_board_gpio_t *cfg, char *buf, size_t max);

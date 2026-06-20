@@ -1,0 +1,8 @@
+CompileFlags:
+  CompilationDatabase: none
+
+Diagnostics:
+  Suppress:
+    - drv_unknown_argument
+    - drv_unknown_argument_with_suggestion
+    - typecheck_incomplete_array_needs_initializer

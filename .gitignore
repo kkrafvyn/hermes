@@ -19,7 +19,7 @@ __pycache__/
 .DS_Store
 .env
 .cache/
-.clangd
+!.clangd
+!hardware/src/.clangd
 hardware/src/.cache/
-hardware/src/.clangd
 hardware/src/wifi_config.h

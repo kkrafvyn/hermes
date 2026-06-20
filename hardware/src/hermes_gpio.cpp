@@ -34,15 +34,6 @@ void hermes_gpio_defaults(hermes_board_gpio_t *out) {
     strncpy(out->board_label, "Custom board", sizeof(out->board_label) - 1);
 }
 
-static void add_entry(hermes_board_gpio_t *cfg, uint8_t gpio, uint8_t fn, uint8_t flags, uint8_t idx) {
-    if (cfg->count >= HERMES_GPIO_MAX) return;
-    hermes_gpio_entry_t *e = &cfg->entries[cfg->count++];
-    e->gpio = gpio;
-    e->fn = fn;
-    e->flags = flags;
-    e->idx = idx;
-}
-
 static int pin_mode_output(uint8_t gpio) {
 #if defined(HERMES_ESP8266) || defined(ESP8266)
     if (gpio >= 16) return -1;
@@ -64,7 +55,17 @@ int hermes_gpio_apply(const hermes_board_gpio_t *cfg) {
     g_active_count = cfg->count > HERMES_GPIO_MAX ? HERMES_GPIO_MAX : cfg->count;
     memcpy(g_active, cfg->entries, g_active_count * sizeof(hermes_gpio_entry_t));
 
+#if defined(HERMES_ESP32) || defined(ESP32) || defined(HERMES_STM32) || defined(HERMES_SAMD)
     int sda = -1, scl = -1;
+    for (uint8_t i = 0; i < g_active_count; i++) {
+        const hermes_gpio_entry_t *e = &g_active[i];
+        if (e->gpio == HERMES_GPIO_UNUSED) continue;
+        if (e->fn == HERMES_FN_I2C_SDA) sda = e->gpio;
+        if (e->fn == HERMES_FN_I2C_SCL) scl = e->gpio;
+    }
+    if (sda >= 0 && scl >= 0)
+        Wire.begin(sda, scl);
+#endif
     for (uint8_t i = 0; i < g_active_count; i++) {
         const hermes_gpio_entry_t *e = &g_active[i];
         if (e->gpio == HERMES_GPIO_UNUSED) continue;
@@ -82,20 +83,15 @@ int hermes_gpio_apply(const hermes_board_gpio_t *cfg) {
         case HERMES_FN_INPUT:
             pin_mode_input(e->gpio, (e->flags & HERMES_GPIO_FLAG_PULLUP) != 0);
             break;
+#if defined(HERMES_ESP32) || defined(ESP32) || defined(HERMES_STM32) || defined(HERMES_SAMD)
         case HERMES_FN_I2C_SDA:
-            sda = e->gpio;
-            break;
         case HERMES_FN_I2C_SCL:
-            scl = e->gpio;
             break;
+#endif
         default:
             break;
         }
     }
-#if defined(HERMES_ESP32) || defined(ESP32) || defined(HERMES_STM32) || defined(HERMES_SAMD)
-    if (sda >= 0 && scl >= 0)
-        Wire.begin(sda, scl);
-#endif
     Serial.printf("HERMES GPIO: applied template \"%s\" (%u pins)\n", cfg->template_id, cfg->count);
     return 0;
 }
@@ -120,6 +116,25 @@ int hermes_gpio_set_relay(uint8_t idx, bool on) {
         return 0;
     }
     return -1;
+}
+
+bool hermes_gpio_relay_on(uint8_t idx) {
+    return idx < 8 && g_relay_state[idx];
+}
+
+void hermes_gpio_relays_json(char *buf, size_t max) {
+    if (!buf || max < 16) return;
+    size_t pos = 0;
+    pos += (size_t)snprintf(buf + pos, max - pos, "[");
+    bool first = true;
+    for (uint8_t r = 0; r < 8 && pos < max - 24; r++) {
+        if (hermes_gpio_find(HERMES_FN_RELAY, r) < 0) continue;
+        if (!first) buf[pos++] = ',';
+        first = false;
+        pos += (size_t)snprintf(buf + pos, max - pos, "{\"idx\":%u,\"on\":%s}",
+            r, g_relay_state[r] ? "true" : "false");
+    }
+    snprintf(buf + pos, max - pos, "]");
 }
 
 void hermes_gpio_states_json(char *buf, size_t max) {

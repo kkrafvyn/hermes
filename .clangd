@@ -1,0 +1,11 @@
+# Use compile_flags.txt — avoid raw PlatformIO compile_commands (Xtensa-only flags).
+CompileFlags:
+  CompilationDatabase: none
+
+Diagnostics:
+  Suppress:
+    - drv_unknown_argument
+    - drv_unknown_argument_with_suggestion
+    - pp_file_not_found
+    - typecheck_incomplete_array_needs_initializer
+  UnusedIncludes: None

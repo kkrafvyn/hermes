@@ -1,0 +1,48 @@
+/* Shared design tokens — imported by dashboard; mirrored on-board via inline vars */
+@import url("themes.css");
+
+:root {
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+  --space-xs: 0.35rem;
+  --space-sm: 0.55rem;
+  --space-md: 0.85rem;
+  --space-lg: 1.25rem;
+  --font-caption: 0.72rem;
+  --font-body: 0.92rem;
+  --font-title: 1.35rem;
+  --transition-fast: 0.15s ease;
+  --accent-ring: var(--focus-ring);
+}
+
+[data-theme="oled"] {
+  --bg: #000000;
+  --bg-elevated: #0a0a0a;
+  --bg-input: #111111;
+  --bg-header: #0a0a0a;
+  --bg-table-head: #141414;
+  --sidebar-bg: rgba(0, 0, 0, 0.94);
+  --border: #2a2a2a;
+  --border-hover: #444444;
+  --text: #f5f5f7;
+  --text-muted: #8e8e93;
+  --accent: #0a84ff;
+  --accent-strong: #0a84ff;
+  --accent-hover: #409cff;
+  --accent-bg: #0d1a2d;
+  --accent-border: #1a3a5c;
+  --badge-online-bg: #0d2818;
+  --badge-warn-bg: #2d1f0a;
+  --badge-warn-text: #ff9f0a;
+  --state-paused: #ff9f0a;
+  --bar: #0a84ff;
+  --hero-grad-end: #0a0a0a;
+  --overlay: rgba(0, 0, 0, 0.72);
+  --stat-overlay: rgba(255, 255, 255, 0.04);
+  --primary-fg: #ffffff;
+  --shadow-soft: none;
+  --shadow-modal: 0 24px 48px rgba(0, 0, 0, 0.85);
+}

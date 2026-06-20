@@ -13,6 +13,11 @@ let sseActive = false;
 let ws = null;
 let authToken = localStorage.getItem('hermes_token') || 'hermes-dev';
 let sensorCatalog = [];
+let blueprintFilter = '';
+let activeCategory = 'all';
+let previewTimer = null;
+let pendingDeployConfig = null;
+let selectedNodeId = null;
 
 function authHeaders(extra = {}) {
   return { 'X-Hermes-Token': authToken, ...extra };
@@ -80,6 +85,7 @@ function applyStatus(status) {
   renderNodes();
   renderApps();
   updateMetrics(status.metrics, status);
+  renderAlerts(status.alerts || []);
   if (blueprintDetail) refreshStudioFields();
 }
 
@@ -147,6 +153,12 @@ function renderBoard() {
     document.getElementById('board-power').textContent = `${(primaryNode.power_mw / 1000).toFixed(2)} W`;
     document.getElementById('board-status').textContent = primaryNode.online ? 'Online' : 'Offline';
     document.getElementById('board-status').className = primaryNode.online ? 'status-chip online' : 'status-chip';
+    const openLink = document.getElementById('board-open-link');
+    const boardIp = status.board_ip || primaryNode.ip || `hermes-${primaryNode.id}.local`;
+    if (openLink) {
+      openLink.href = boardIp.startsWith('http') ? boardIp : `http://${boardIp}/`;
+      openLink.classList.remove('hidden');
+    }
     heading.textContent = 'Board Dashboard';
     if (subtitle) subtitle.textContent = `${primaryNode.name} · ${primaryNode.node_type}`;
     const meshEl = document.getElementById('mesh-panel');
@@ -209,8 +221,11 @@ function renderApps() {
   const visibleApps = boardMode && primaryNode
     ? apps.filter(a => a.node_id === primaryNode.id)
     : apps;
-  list.innerHTML = visibleApps.length ? visibleApps.map(a => `
+  list.innerHTML = visibleApps.length ? visibleApps.map(a => {
+    const icon = a.blueprint ? categoryIcon(blueprintCategory(a.blueprint)) : hermesIcon('other');
+    return `
     <article class="app-card">
+      <div class="app-card-icon" aria-hidden="true">${icon}</div>
       <div class="app-card-main">
         <h3>${a.display_name || a.name}</h3>
         <p>${a.blueprint || 'manifest'} · <span class="state-${a.state}">${a.state}</span></p>
@@ -225,8 +240,22 @@ function renderApps() {
         ${nodes.length > 1 ? `<button class="action" onclick="appAction('${a.name}','migrate')">Migrate</button>` : ''}
         <button class="action" onclick="appAction('${a.name}','stop')">Stop</button>
       </div>
-    </article>
-  `).join('') : `<div class="app-empty">No apps deployed yet. Use App Studio above to create one.</div>`;
+    </article>`;
+  }).join('') : `<div class="app-empty">No apps deployed yet. Use App Studio above to create one.</div>`;
+}
+
+function renderAlerts(alerts) {
+  const el = document.getElementById('alerts-panel');
+  if (!el) return;
+  if (!alerts.length) {
+    el.innerHTML = 'No active alerts';
+    el.className = 'alerts-panel hint';
+    return;
+  }
+  el.className = 'alerts-panel';
+  el.innerHTML = alerts.map(a =>
+    `<div class="alert-item"><strong>${a.id || a.sensor}</strong> — ${a.sensor} ${a.op} ${a.threshold} (now ${a.value})</div>`
+  ).join('');
 }
 
 function updateMetrics(metrics, status = {}) {
@@ -269,19 +298,139 @@ async function loadBlueprints() {
   }
 }
 
+function filteredBlueprints() {
+  const q = blueprintFilter.trim().toLowerCase();
+  let list = blueprints;
+  if (activeCategory !== 'all') {
+    const cat = BLUEPRINT_CATEGORIES.find(c => c.id === activeCategory);
+    if (cat) list = list.filter(bp => cat.ids.includes(bp.id));
+  }
+  if (q) {
+    list = list.filter(bp =>
+      bp.name.toLowerCase().includes(q) ||
+      bp.id.includes(q) ||
+      String(bp.description || '').toLowerCase().includes(q)
+    );
+  }
+  const favs = getFavoriteBlueprints();
+  return [...list.filter(bp => favs.includes(bp.id)), ...list.filter(bp => !favs.includes(bp.id))];
+}
+
+function renderCategoryChips() {
+  const el = document.getElementById('category-chips');
+  if (!el) return;
+  const chips = [{ id: 'all', label: 'All', icon: 'all' }, ...BLUEPRINT_CATEGORIES];
+  el.innerHTML = chips.map(c =>
+    `<button type="button" class="cat-chip ${activeCategory === c.id ? 'active' : ''}" data-cat="${c.id}"><span class="chip-icon">${categoryIcon(c)}</span> ${c.label}</button>`
+  ).join('');
+  el.querySelectorAll('.cat-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeCategory = btn.dataset.cat;
+      renderCategoryChips();
+      renderBlueprintList();
+    });
+  });
+}
+
+function renderFavoritesRail() {
+  const el = document.getElementById('favorites-rail');
+  const favs = getFavoriteBlueprints();
+  if (!el || !favs.length) {
+    if (el) el.classList.add('hidden');
+    return;
+  }
+  el.classList.remove('hidden');
+  el.innerHTML = favs.map(id => {
+    const bp = blueprints.find(b => b.id === id);
+    return bp ? `<button type="button" class="fav-chip" data-id="${id}"><span class="chip-icon">${hermesIcon('star')}</span> ${bp.name}</button>` : '';
+  }).join('');
+  el.querySelectorAll('.fav-chip').forEach(btn => {
+    btn.addEventListener('click', () => selectBlueprint(btn.dataset.id));
+  });
+}
+
 function renderBlueprintList() {
+  const list = filteredBlueprints();
+  const countEl = document.getElementById('blueprint-count');
+  if (countEl) {
+    countEl.textContent = list.length === blueprints.length
+      ? `${blueprints.length} apps`
+      : `${list.length} of ${blueprints.length} apps`;
+  }
+  renderFavoritesRail();
   const el = document.getElementById('blueprint-list');
-  el.innerHTML = blueprints.map(bp => `
-    <button type="button" class="bp-card ${selectedBlueprint === bp.id ? 'active' : ''}"
-            onclick="selectBlueprint('${bp.id}')">
-      <strong>${bp.name}</strong>
+  if (!list.length) {
+    el.innerHTML = '<p class="blueprint-empty">No matching apps. Try a different search.</p>';
+    return;
+  }
+  const favs = getFavoriteBlueprints();
+  el.innerHTML = list.map(bp => {
+    const cat = blueprintCategory(bp.id);
+    const fav = favs.includes(bp.id);
+    return `
+    <div class="bp-card ${selectedBlueprint === bp.id ? 'active' : ''}" role="button" tabindex="0" data-bp-id="${bp.id}">
+      <button type="button" class="bp-fav ${fav ? 'on' : ''}" data-fav-id="${bp.id}" aria-label="${fav ? 'Remove favorite' : 'Add favorite'}">${fav ? hermesIcon('star') : hermesIcon('starOutline')}</button>
+      <strong><span class="bp-icon">${categoryIcon(cat)}</span>${bp.name}</strong>
       <span>${bp.description}</span>
-    </button>
-  `).join('');
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.bp-card').forEach(card => {
+    const id = card.dataset.bpId;
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.bp-fav')) return;
+      selectBlueprint(id);
+    });
+    card.addEventListener('keydown', (e) => {
+      if (e.target.closest('.bp-fav')) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectBlueprint(id);
+      }
+    });
+    const favBtn = card.querySelector('.bp-fav');
+    if (favBtn) {
+      favBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavorite(id);
+      });
+    }
+  });
+}
+
+function toggleFavorite(id) {
+  const favs = getFavoriteBlueprints();
+  setFavoriteBlueprint(id, !favs.includes(id));
+  renderBlueprintList();
+}
+
+function stopLivePreview() {
+  if (previewTimer) clearInterval(previewTimer);
+  previewTimer = null;
+}
+
+function startLivePreview(metrics) {
+  stopLivePreview();
+  const el = document.getElementById('studio-preview');
+  if (!el || !metrics.length) {
+    if (el) el.classList.add('hidden');
+    return;
+  }
+  el.classList.remove('hidden');
+  const tick = () => {
+    el.innerHTML = metrics.slice(0, 6).map(m => {
+      const v = m.type === 'bool'
+        ? (Math.random() > 0.5 ? 'on' : 'off')
+        : (Math.random() * (m.unit === '%' ? 100 : 50)).toFixed(m.unit === '%' ? 0 : 1);
+      return `<div class="preview-tile"><span class="label">${m.label}</span><span class="value">${v}${m.unit && m.unit !== 'bool' ? m.unit : ''}</span></div>`;
+    }).join('');
+  };
+  tick();
+  previewTimer = setInterval(tick, 2000);
 }
 
 async function selectBlueprint(id) {
   selectedBlueprint = id;
+  pushRecentBlueprint(id);
   renderBlueprintList();
   try {
     blueprintDetail = await api(`/api/blueprints/${id}`);
@@ -294,6 +443,7 @@ async function selectBlueprint(id) {
     if (hint) hint.textContent = blueprintDetail.description || 'Customize fields, then deploy.';
     renderStudioFields(blueprintDetail.fields || []);
     renderMetricsPreview(blueprintDetail.metrics || []);
+    startLivePreview(blueprintDetail.metrics || []);
     document.getElementById('btn-create-app').disabled = !nodes.length;
     if (!nodes.length) toast('Connect a board before deploying apps', 'error');
   } catch (e) {
@@ -436,6 +586,19 @@ function instanceNameFromConfig(config, blueprintId) {
   return `${blueprintId}-${Date.now().toString(36)}`;
 }
 
+function showDeployModal(config) {
+  pendingDeployConfig = config;
+  const name = instanceNameFromConfig(config, selectedBlueprint);
+  const node = nodes.length === 1 ? nodes[0] : nodes.find(n => n.id === (config.target_node ?? selectedNodeId));
+  document.getElementById('deploy-summary').innerHTML = `
+    <div class="row"><span>Blueprint</span><strong>${blueprintDetail.name}</strong></div>
+    <div class="row"><span>Instance</span><strong>${name}</strong></div>
+    <div class="row"><span>Board</span><span>${node ? nodeLabel(node.id) : 'Auto'}</span></div>
+    <div class="row"><span>Sensors</span><span>${(config.sensors || []).length || (config.sensors ? 'yes' : '0')}</span></div>
+    <div class="row"><span>Mesh</span><span>${config.mesh_enabled ? 'enabled' : 'off'}</span></div>`;
+  document.getElementById('deploy-modal').classList.remove('hidden');
+}
+
 async function createApp() {
   if (!selectedBlueprint || !blueprintDetail) {
     toast('Select a blueprint first', 'error');
@@ -447,9 +610,17 @@ async function createApp() {
   }
   const config = readFormFields('studio-fields');
   if (nodes.length === 1) config.target_node = nodes[0].id;
+  else if (selectedNodeId != null) config.target_node = selectedNodeId;
+  showDeployModal(config);
+}
+
+async function confirmDeploy() {
+  if (!pendingDeployConfig || !selectedBlueprint) return;
+  const config = pendingDeployConfig;
+  document.getElementById('deploy-modal').classList.add('hidden');
   const displayName = instanceNameFromConfig(config, selectedBlueprint);
   const name = slugifyName(displayName) || `${selectedBlueprint}-${Date.now().toString(36)}`;
-  const btn = document.getElementById('btn-create-app');
+  const btn = document.getElementById('btn-deploy-confirm');
   btn.disabled = true;
   try {
     const result = await api('/api/apps/create', {
@@ -474,7 +645,9 @@ async function createApp() {
     toast(`Deploy failed: ${e.message}`, 'error');
     log(`Create error: ${e.message}`);
   } finally {
-    btn.disabled = !nodes.length;
+    btn.disabled = false;
+    pendingDeployConfig = null;
+    document.getElementById('btn-create-app').disabled = !nodes.length;
   }
 }
 
@@ -566,6 +739,11 @@ async function appAction(name, action) {
 }
 
 document.getElementById('btn-create-app').addEventListener('click', createApp);
+document.getElementById('btn-deploy-confirm').addEventListener('click', confirmDeploy);
+document.getElementById('btn-deploy-cancel').addEventListener('click', () => {
+  document.getElementById('deploy-modal').classList.add('hidden');
+  pendingDeployConfig = null;
+});
 document.getElementById('btn-config-save').addEventListener('click', saveConfig);
 document.getElementById('btn-config-cancel').addEventListener('click', () => {
   document.getElementById('config-modal').classList.add('hidden');
@@ -589,25 +767,32 @@ document.getElementById('btn-deploy').addEventListener('click', async () => {
 });
 
 function initNav() {
-  const items = document.querySelectorAll('.nav-item');
-  const views = document.querySelectorAll('.view');
-  items.forEach(btn => {
-    btn.addEventListener('click', () => {
-      items.forEach(b => b.classList.remove('active'));
-      views.forEach(v => v.classList.remove('active'));
-      btn.classList.add('active');
-      const view = document.getElementById(`view-${btn.dataset.view}`);
-      if (view) view.classList.add('active');
-    });
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = hermesIcon(el.dataset.icon);
   });
+  const items = document.querySelectorAll('.sidebar .nav-item, .mobile-nav .nav-item');
+  const views = document.querySelectorAll('.view');
+  function activate(btn) {
+    items.forEach(b => b.classList.toggle('active', b.dataset.view === btn.dataset.view));
+    views.forEach(v => v.classList.toggle('active', v.id === `view-${btn.dataset.view}`));
+  }
+  items.forEach(btn => btn.addEventListener('click', () => activate(btn)));
 }
 
 (async () => {
   initHermesThemePicker();
   initNav();
+  const bpSearch = document.getElementById('blueprint-search');
+  if (bpSearch) {
+    bpSearch.addEventListener('input', () => {
+      blueprintFilter = bpSearch.value;
+      renderBlueprintList();
+    });
+  }
   await ensureAuth();
   await loadSensors();
   await loadBlueprints();
+  renderCategoryChips();
   refresh();
   connectWebSocket();
   setInterval(() => { if (!sseActive && !ws) refresh(); }, 2000);
