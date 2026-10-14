@@ -1,8 +1,19 @@
 # HERMES
 
-**Open runtime platform for hosting many applications across heterogeneous MCU clusters.**
+**Experimental embedded runtime and control plane for applications across heterogeneous MCU nodes.**
 
-HERMES is not task migration. It is a **tiny distributed operating system for microcontrollers** — a control plane that schedules, isolates, checkpoints, and moves applications across STM32, ESP32, nRF, and future targets.
+HERMES combines C/C++ runtime components, Python device agents and control-plane services, a browser dashboard, and board-specific firmware configurations. It explores scheduling, isolation, checkpointing and migration across STM32, Espressif and Nordic targets.
+
+## Project status and review path
+
+This is an engineering prototype. A target appearing in the registry or a build configuration is not evidence of physical validation on that board. Host simulation, compilation, flashing, hardware behavior and deployment readiness must be checked separately. Alias or port entries are not interchangeable firmware for different MCUs.
+
+- Review the [architecture](docs/ARCHITECTURE.md) and [public API](docs/API.md).
+- Run the [quickstart](docs/QUICKSTART.md) before attempting hardware deployment.
+- Inspect [C runtime code](runtime/src), [Python control-plane services](tools/control-plane) and [tests](tests).
+- Use the [MCU support notes](docs/MCU_SUPPORT.md) and the actual target SDK; confirm the exact board before flashing.
+
+The commands below are the repository's supplied workflows. A successful local run should be recorded with its revision, environment and test output.
 
 **HERMES** — *Heterogeneous Embedded Runtime Migration & Execution System*
 
@@ -10,7 +21,7 @@ HERMES is not task migration. It is a **tiny distributed operating system for mi
 
 | Document | Description |
 |----------|-------------|
-| **[User Guide — How to Use on Any Board](docs/USER_GUIDE.md)** | **Start here — flash, bridge, App Studio, all 60 MCUs** |
+| **[User Guide — How to Use on Any Board](docs/USER_GUIDE.md)** | **Start here — setup, serial bridge and App Studio** |
 | **[Complete Project Documentation](docs/HERMES_COMPLETE_DOCUMENTATION.md)** | **Submission-ready — MCUs, sensors, build matrix, deployment** |
 | [Documentation Index](docs/README.md) | All guides — gaps closed, full index |
 | [Full Project Documentation](docs/PROJECT_DOCUMENTATION.md) | Extended technical reference |
@@ -21,7 +32,7 @@ HERMES is not task migration. It is a **tiny distributed operating system for mi
 | [Hardware Bring-Up](docs/HARDWARE_BRINGUP.md) | Flash ESP32, serial bridge, full cluster |
 | [Build Targets](docs/BUILD_TARGETS.md) | All ESP / STM32 / nRF build matrix |
 | [Sensors](docs/SENSORS.md) | 37 sensors on all 60 MCU targets |
-| [MCU Support](docs/MCU_SUPPORT.md) | 60 MCUs — tiers, workarounds, flash commands |
+| [MCU Support](docs/MCU_SUPPORT.md) | Target registry — tiers, workarounds and flash commands |
 | [Blueprints](docs/BLUEPRINTS.md) | 26 App Studio templates |
 | [Security](docs/SECURITY.md) | Auth, HMAC, identity model |
 | [Contributing](docs/CONTRIBUTING.md) | Add MCUs, sensors, blueprints |
